@@ -39,3 +39,4 @@ jobs:
             See the assets below to download and install the Windows version.
           releaseDraft: true
           prerelease: false
+          args: --target x86_64-pc-windows-msvc
