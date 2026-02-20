@@ -1,204 +1,243 @@
 /* ============================================
    家政/育婴师模板样式
-   尺寸: 750 x 1334px
+   尺寸: 900 x 1334px
    ============================================ */
 
 .nanny-poster {
-    width: 750px;
+    width: 900px;
     height: 1334px;
     display: flex;
     flex-direction: column;
     font-family: 'Noto Sans SC', sans-serif;
     overflow: hidden;
-    background: #fff;
-}
-
-/* ---- 顶部区域（玫红背景） ---- */
-.nanny-top {
-    flex: 0 0 auto;
-    background: linear-gradient(145deg, #E91E63 0%, #D81B60 50%, #C2185B 100%);
-    color: #fff;
-    padding: 40px 48px 36px;
     position: relative;
-    min-height: 680px;
+    /* 主背景色：玫红 */
+    background-color: #A30F3F;
+    /* 参考图像的深粉红/暗紫红色 */
+    background: linear-gradient(180deg, #A80A45 0%, #C41857 50%, #E9A3C2 100%);
 }
 
-/* Logo */
-.nanny-logo-wrapper {
+/* ---- 顶部主要区域 ---- */
+.nanny-top-section {
+    flex: 1;
+    position: relative;
+    padding: 40px 0 0 0;
+    z-index: 1;
+}
+
+/* Logo 位置靠右 */
+.nanny-logo-header {
     position: absolute;
     top: 30px;
-    right: 36px;
-    width: 110px;
-    height: 110px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(4px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    right: 40px;
+    width: 140px;
 }
 
 .nanny-logo {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    border-radius: 8px;
+    /* 如果有边框，可以在此添加 */
 }
 
-/* 城市+职位 */
-.nanny-city {
-    font-size: 64px;
+/* 标题区域：带立体阴影 */
+.nanny-header {
+    padding: 60px 60px 0;
+    margin-bottom: 30px;
+}
+
+.nanny-main-title {
+    font-size: 80px;
     font-weight: 900;
-    line-height: 1.2;
+    color: #fff;
+    margin: 0 0 20px 0;
     letter-spacing: 4px;
-    margin-bottom: 0;
+    text-shadow: 4px 6px 4px rgba(0, 0, 0, 0.3);
+    /* 立体投影效果 */
+    line-height: 1.1;
 }
 
-.nanny-title {
-    font-size: 64px;
-    font-weight: 900;
-    line-height: 1.2;
-    letter-spacing: 4px;
-    margin-bottom: 24px;
-}
-
-/* 员工照片 */
-.nanny-photo-wrapper {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 4px solid rgba(255, 255, 255, 0.5);
-    margin-bottom: 24px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.nanny-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.nanny-photo-placeholder {
-    width: 100%;
-    height: 100%;
+.nanny-subtitle {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 20px;
-    color: rgba(255, 255, 255, 0.6);
+    gap: 16px;
+    color: #fff;
 }
 
-.nanny-photo-placeholder span:first-child {
-    font-size: 40px;
+.nanny-divider {
+    font-size: 60px;
+    font-weight: 300;
+    color: #fff;
 }
 
-/* 姓名 */
 .nanny-name {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 20px;
-}
-
-.nanny-name-bar {
-    width: 6px;
-    height: 42px;
-    background: #fff;
-    border-radius: 3px;
-    flex-shrink: 0;
-}
-
-.nanny-name-text {
-    font-size: 48px;
+    font-size: 64px;
     font-weight: 700;
     letter-spacing: 2px;
 }
 
-/* 标签 */
-.nanny-tags {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.nanny-tag {
-    font-size: 28px;
-    font-weight: 400;
-    line-height: 1.6;
-    opacity: 0.95;
-}
-
-/* ---- 底部区域（白色背景） ---- */
-.nanny-bottom {
-    flex: 1;
-    background: #fff;
-    padding: 28px 48px 36px;
-    display: flex;
-    flex-direction: column;
+/* 身体区：左边列表，右边人物 */
+.nanny-body-wrapper {
     position: relative;
+    padding: 0 60px;
+    height: 600px;
+    /* 给人物留出固定足够高度 */
 }
 
-/* 薪资标签 */
-.nanny-salary-badge {
-    display: inline-flex;
-    align-items: center;
-    align-self: flex-start;
-    background: linear-gradient(135deg, #E91E63 0%, #F06292 100%);
-    color: #fff;
-    font-size: 32px;
-    font-weight: 700;
-    padding: 12px 36px;
-    border-radius: 40px;
-    margin-bottom: 28px;
-    box-shadow: 0 4px 16px rgba(233, 30, 99, 0.3);
-    letter-spacing: 1px;
+.nanny-left-col {
+    position: absolute;
+    left: 60px;
+    top: 0px;
+    z-index: 2;
 }
 
-/* 亮点文案 */
-.nanny-highlights {
+.nanny-tags-list {
     list-style: none;
+    margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    flex: 1;
+    gap: 24px;
 }
 
-.nanny-highlight-item {
+.nanny-tag-item {
+    font-size: 40px;
+    color: #fff;
+    font-weight: 500;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.nanny-right-col {
+    position: absolute;
+    right: 20px;
+    bottom: -70px;
+    /* 人物可以适当超出这个容器到底部卡片上 */
+    width: 600px;
+    height: 800px;
+    z-index: 1;
+}
+
+.nanny-photo-cutout {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom right;
+}
+
+.nanny-photo-placeholder-cutout {
+    width: 450px;
+    height: 600px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    padding: 20px;
+}
+
+.nanny-photo-placeholder-cutout span:first-child {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+/* ---- 底部信息卡片 ---- */
+.nanny-bottom-card-wrapper {
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    padding: 0 60px;
+    z-index: 10;
+}
+
+.nanny-info-card {
+    background: #fff;
+    border: 6px solid #D81B60;
+    /* 玫红边框 */
+    border-radius: 24px;
+    position: relative;
+    padding: 60px 40px 40px;
+    /* 顶部留给大丝带 */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* 薪资丝带 - 置于卡片之上 */
+.nanny-salary-ribbon {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #A80A45 0%, #E91E63 50%, #A80A45 100%);
+    color: #fff;
+    padding: 10px 40px;
+    font-size: 50px;
+    font-weight: bold;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(233, 30, 99, 0.4);
+    white-space: nowrap;
+}
+
+/* 丝带两端的菱形装饰 (用边框实现) */
+.nanny-salary-ribbon::before,
+.nanny-salary-ribbon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 30px;
+    height: 30px;
+    background: #5D9BE5;
+    /* 参考图中的蓝色菱形 */
+}
+
+.nanny-salary-ribbon::before {
+    left: -15px;
+}
+
+.nanny-salary-ribbon::after {
+    right: -15px;
+}
+
+.nanny-salary-text {
+    position: relative;
+    z-index: 2;
+    letter-spacing: 2px;
+}
+
+/* 卡片内的亮点列表 */
+.nanny-highlights-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.nanny-highlight-row {
+    font-size: 32px;
+    color: #6C153A;
+    /* 深红褐色文字 */
+    font-weight: 700;
     display: flex;
     align-items: flex-start;
-    gap: 14px;
-    font-size: 26px;
-    font-weight: 400;
-    color: #333;
-    line-height: 1.5;
+    line-height: 1.4;
 }
 
-.nanny-highlight-dot {
-    width: 18px;
-    height: 18px;
-    min-width: 18px;
-    border-radius: 50%;
-    background: #E91E63;
-    margin-top: 6px;
-}
-
-/* 底部编号 */
-.nanny-footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 8px;
-    padding-top: 20px;
-    font-size: 22px;
-    color: #E91E63;
-    font-weight: 500;
-}
-
-.nanny-footer-arrow {
-    font-size: 18px;
+.nanny-highlight-bullet {
+    color: #A80A45;
+    margin-right: 15px;
+    font-size: 28px;
+    transform: scale(0.8);
+    position: relative;
+    top: 4px;
 }

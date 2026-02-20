@@ -20,8 +20,12 @@ export default function PreviewPanel({ posterRef }: Props) {
         const calculateScale = () => {
             const vp = viewportRef.current
             if (!vp) return
-            const vpW = vp.clientWidth - 48 // padding
-            const vpH = vp.clientHeight - 48
+            // 增加视口内边距，留出更多呼吸空间
+            const paddingX = 80
+            const paddingY = 60
+            const vpW = vp.clientWidth - paddingX
+            const vpH = vp.clientHeight - paddingY
+            // 让宽幅海报可以被正确缩放
             const scaleX = vpW / template.width
             const scaleY = vpH / template.height
             setScale(Math.min(scaleX, scaleY, 1))
