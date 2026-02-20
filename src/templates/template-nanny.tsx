@@ -64,39 +64,46 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
 
     return (
         <div className="nanny-poster">
-            {/* 顶部区域：背景和人物信息 */}
+            {/* 顶部金色装饰横线 */}
+            <div className="nanny-deco-stripe" />
+
+            {/* 顶部区域：标题 + 标签 + 人物 */}
             <div className="nanny-top-section">
-                {/* Logo区 */}
+                {/* Logo 右上角 */}
                 <div className="nanny-logo-header">
                     <img src={logoImg} alt="ONLY YOU Logo" className="nanny-logo" />
                 </div>
 
+                {/* 主标题 */}
                 <div className="nanny-header">
                     <h1 className="nanny-main-title">{city}{title}</h1>
                     <div className="nanny-subtitle">
-                        <span className="nanny-divider">|</span>
+                        {/* 金色竖线分隔符 */}
+                        <span className="nanny-divider" />
                         <span className="nanny-name">{name}</span>
                     </div>
                 </div>
 
                 <div className="nanny-body-wrapper">
+                    {/* 左列：个人标签 */}
                     <div className="nanny-left-col">
                         {tags.length > 0 && (
                             <ul className="nanny-tags-list">
                                 {tags.map((tag, i) => (
-                                    <li key={i} className="nanny-tag-item">● {tag}</li>
+                                    <li key={i} className="nanny-tag-item">{tag}</li>
                                 ))}
                             </ul>
                         )}
                     </div>
 
+                    {/* 右列：人物照片 */}
                     <div className="nanny-right-col">
                         {photo ? (
                             <img src={photo} alt="员工照片" className="nanny-photo-cutout" />
                         ) : (
                             <div className="nanny-photo-placeholder-cutout">
-                                <span>📷</span>
-                                <span>上传照片(透明底最佳)</span>
+                                <span className="ph-icon">📷</span>
+                                <span className="ph-text">上传照片<br />透明底最佳</span>
                             </div>
                         )}
                     </div>
@@ -106,24 +113,31 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
             {/* 底部信息卡片 */}
             <div className="nanny-bottom-card-wrapper">
                 <div className="nanny-info-card">
+                    {/* 金色薪资丝带 */}
                     {salary && (
                         <div className="nanny-salary-ribbon">
-                            <span className="nanny-ribbon-tail-left"></span>
                             <span className="nanny-salary-text">{salary}</span>
-                            <span className="nanny-ribbon-tail-right"></span>
                         </div>
                     )}
 
+                    {/* 亮点文案列表（数字序号） */}
                     {highlights.length > 0 && (
                         <ul className="nanny-highlights-list">
                             {highlights.map((h, i) => (
                                 <li key={i} className="nanny-highlight-row">
-                                    <span className="nanny-highlight-bullet">●</span>
+                                    <span className="nanny-highlight-bullet" />
                                     <span>{h}</span>
                                 </li>
                             ))}
                         </ul>
                     )}
+
+                    {/* 底部品牌装饰线 */}
+                    <div className="nanny-brand-footer">
+                        <span className="nanny-brand-footer-line" />
+                        <span className="nanny-brand-footer-text">欧利优家政服务</span>
+                        <span className="nanny-brand-footer-line" />
+                    </div>
                 </div>
             </div>
         </div>
