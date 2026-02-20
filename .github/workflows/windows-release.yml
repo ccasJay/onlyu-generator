@@ -39,6 +39,5 @@ jobs:
           releaseBody: |
             ## OnlyU Generator Releases
             See the assets below to download and install the Windows version.
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
-          args: --target x86_64-pc-windows-msvc
