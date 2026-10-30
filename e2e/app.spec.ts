@@ -40,6 +40,31 @@ test('blocks export with field-level errors when required fields are empty', asy
     await expect(page.locator('input[type="file"]')).toBeFocused()
 })
 
+test('supports keyboard tag removal, visible focus, and cancelable reset', async ({ page }) => {
+    await page.goto('/')
+
+    await page.getByLabel('城市').focus()
+    await page.keyboard.press('Tab')
+    const outlineStyle = await page.evaluate(
+        () => getComputedStyle(document.activeElement!).outlineStyle
+    )
+    expect(outlineStyle).not.toBe('none')
+
+    const tagInput = page.getByLabel('个人标签（逗号分隔）')
+    await tagInput.fill('上海人')
+    await tagInput.press('Enter')
+
+    const removeButton = page.getByRole('button', { name: '删除标签 上海人' })
+    await removeButton.focus()
+    await page.keyboard.press('Enter')
+    await expect(removeButton).toHaveCount(0)
+
+    await page.getByLabel('阿姨姓名').fill('保留内容')
+    page.once('dialog', (dialog) => void dialog.dismiss())
+    await page.getByRole('button', { name: /重置/ }).click()
+    await expect(page.getByLabel('阿姨姓名')).toHaveValue('保留内容')
+})
+
 test('compresses a large transparent PNG and exports a 2x PNG', async ({ page }) => {
     await page.goto('/')
 
