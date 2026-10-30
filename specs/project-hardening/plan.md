@@ -59,18 +59,18 @@
 
 - [x] //TODO 12. 完成 README、发布与更新运维文档
   - 落实标准：[8.5](./spec.md#spec-req-8-5), [8.6](./spec.md#spec-req-8-6)
-  - 实施目标与场景：README 记录安装、开发、构建、测试、Lint、版本发布、公开 releases 仓库、updater 签名密钥与 CI secrets 配置，以及原生保存/更新检查/安装的手工验证清单；明确 `0.1.0` 用户需手动安装一次 `0.2.0`。场景：新维护者按文档可完成本地构建和测试；手工清单覆盖保存、取消、写入失败、启动检查、手动检查、下载失败、重启确认。
+  - 实施目标与场景：README 记录安装、开发、构建、测试、Lint、版本发布、公开仓库、updater 签名密钥与 CI secrets 配置，以及原生保存/更新检查/安装的手工验证清单；明确 `0.1.0` 用户需手动安装一次 `0.2.0`。场景：新维护者按文档可完成本地构建和测试；手工清单覆盖保存、取消、写入失败、启动检查、手动检查、下载失败、重启确认。
   - 验证手段：逐段执行 README 中的安装、构建、测试命令；检查清单覆盖 Spec 8.5/8.6 要求；用链接检查或人工审阅确认引用有效。
 
 - [x] //TODO 13. 完成版本统一与 Windows 发布流水线
   - 落实标准：[9.1](./spec.md#spec-req-9-1), [9.2](./spec.md#spec-req-9-2), [9.3](./spec.md#spec-req-9-3), [9.4](./spec.md#spec-req-9-4), [9.5](./spec.md#spec-req-9-5), [9.6](./spec.md#spec-req-9-6), [10.9](./spec.md#spec-req-10-9)
-  - 实施目标与场景：将版本统一为 `0.2.0` 并增加版本一致性脚本；发布 workflow 由 `v*` 标签触发，只构建 Windows NSIS，启用 updater 产物、`npm ci`、缓存与并发控制；将安装包、签名文件和改写为公开仓库 URL 的 `latest.json` 上传到公开 releases 仓库；缺少密钥或凭据时构建前失败，发布说明包含旧版本手动升级提示。场景：标签与版本不一致时 workflow 在构建前失败；删除测试环境 secret 时不产生未签名 Release；公开仓库 Release 只含安装包、签名和清单，不含源码。
-  - 验证手段：运行 `npm run version:check`；在测试标签上执行一次发布并检查 `gh release view`、资产列表与 `latest.json` URL；在临时分支移除 secret 验证失败路径。公开仓库和 secrets 未就绪时，该项标记为 blocked/pending-human，不宣称通过。
+  - 实施目标与场景：将版本统一为 `0.2.0` 并增加版本一致性脚本；发布 workflow 由 `v*` 标签触发，只构建 Windows NSIS，启用 updater 产物、`npm ci`、缓存与并发控制；将安装包、签名文件和 `latest.json` 直接发布到当前公开仓库的 Release；缺少签名密钥时构建前失败，发布说明包含旧版本手动升级提示。场景：标签与版本不一致时 workflow 在构建前失败；删除测试环境 secret 时不产生未签名 Release；当前仓库 Release 只含安装包、签名和清单，不包含私钥。
+  - 验证手段：运行 `npm run version:check`；在测试标签上执行一次发布并检查 `gh release view`、资产列表与 `latest.json` URL；在临时分支移除 secret 验证失败路径。当前仓库未公开或 secrets 未就绪时，该项标记为 blocked/pending-human，不宣称通过。
 
 - [x] //TODO 14. 完成签名自动更新客户端与交互
   - 落实标准：[10.1](./spec.md#spec-req-10-1), [10.2](./spec.md#spec-req-10-2), [10.3](./spec.md#spec-req-10-3), [10.4](./spec.md#spec-req-10-4), [10.5](./spec.md#spec-req-10-5), [10.6](./spec.md#spec-req-10-6), [10.7](./spec.md#spec-req-10-7), [10.8](./spec.md#spec-req-10-8), [10.10](./spec.md#spec-req-10-10), [10.11](./spec.md#spec-req-10-11)
   - 实施目标与场景：接入 updater、process 与 dialog 插件及最小 capability，封装 `idle/checking/available/downloading/ready/error` 服务；应用就绪后静默检查一次，顶栏提供手动入口，发现更新时展示版本、纯文本说明和“下载并安装/稍后”，下载显示进度，完成后提示重启；非 Tauri 环境隐藏入口且不请求；只接受 HTTPS 与有效签名，拒绝降级；identifier 保持不变，更新后草稿仍可恢复。场景：浏览器中无检查入口且无网络请求；模拟无更新、可更新、下载失败、15 秒超时；拒绝重启后应用继续运行；篡改签名或降低版本时拒绝安装。
-  - 验证手段：用 mock updater 编写状态机与超时测试；在 Windows 上使用测试 `latest.json` 验证手动检查、下载进度、重启和草稿保留；用 `git grep` 与产物解包确认无私钥；运行 `cargo check` 与构建检查 capability。真实 `0.2.0 → 0.2.1` 更新演练放入 Feature Verification，公共仓库与 secrets 未就绪时标记 blocked/pending-human。
+  - 验证手段：用 mock updater 编写状态机与超时测试；在 Windows 上使用当前仓库的测试 `latest.json` 验证手动检查、下载进度、重启和草稿保留；用 `git grep` 与产物解包确认无私钥；运行 `cargo check` 与构建检查 capability。真实 `0.2.0 → 0.2.1` 更新演练放入 Feature Verification，仓库公开与 secrets 未就绪时标记 blocked/pending-human。
 
 ## Feature Verification
 
@@ -92,7 +92,7 @@
 | 异常兜底与可访问性 | [7.1](./spec.md#spec-req-7-1), [7.2](./spec.md#spec-req-7-2), [7.3](./spec.md#spec-req-7-3), [7.4](./spec.md#spec-req-7-4), [7.5](./spec.md#spec-req-7-5) | 渲染抛错显示兜底页且可重新加载/确认清除草稿；错误有可见提示；标签关联、`aria-label`、键盘删除、重置/更新确认可用；焦点可见。 | RTL 错误边界测试；Playwright 键盘流程；人工检查焦点与对话框取消。 |
 | 自动化回归与列表稳定 | [8.3](./spec.md#spec-req-8-3), [8.4](./spec.md#spec-req-8-4), [8.7](./spec.md#spec-req-8-7) | 全量单元/组件/E2E 覆盖草稿异常、透明通道、校验、生命周期、文本上限和导出阻断；Playwright 冒烟通过；单字段变化不触发无关区域；删除中间标签内容正确。 | `npm run test && npm run test:e2e`；渲染计数断言；删除中间项组件测试。 |
 | 文档与手工清单 | [8.5](./spec.md#spec-req-8-5), [8.6](./spec.md#spec-req-8-6) | README 覆盖开发/构建/测试/发布/updater secrets/公开仓库配置；手工清单覆盖原生保存与更新全流程；文档命令可执行。 | 逐段执行 README 命令；审阅清单；链接检查。 |
-| 版本统一与发布 | [9.1](./spec.md#spec-req-9-1), [9.2](./spec.md#spec-req-9-2), [9.3](./spec.md#spec-req-9-3), [9.4](./spec.md#spec-req-9-4), [9.5](./spec.md#spec-req-9-5), [9.6](./spec.md#spec-req-9-6), [10.9](./spec.md#spec-req-10-9) | 四处版本为 0.2.0 且 `version:check` 通过；`v0.2.0` 触发 Windows NSIS、签名产物与公开 `latest.json`；版本不一致或缺失 secret 时构建前失败；Release 仅含安装包/签名/清单；说明 0.1.0 需手动升级；`latest.json` URL 指向公开资产。 | `npm run version:check`；测试标签发布；`gh release view`；下载并检查 `latest.json`。前置条件未就绪时标记 blocked/pending-human。 |
+| 版本统一与发布 | [9.1](./spec.md#spec-req-9-1), [9.2](./spec.md#spec-req-9-2), [9.3](./spec.md#spec-req-9-3), [9.4](./spec.md#spec-req-9-4), [9.5](./spec.md#spec-req-9-5), [9.6](./spec.md#spec-req-9-6), [10.9](./spec.md#spec-req-10-9) | 四处版本为 0.2.0 且 `version:check` 通过；`v0.2.0` 触发 Windows NSIS、签名产物与公开 `latest.json`；版本不一致或缺失签名 secret 时构建前失败；当前仓库 Release 仅含安装包/签名/清单；说明 0.1.0 需手动升级；`latest.json` URL 指向当前仓库资产。 | `npm run version:check`；测试标签发布；`gh release view`；下载并检查 `latest.json`。当前仓库未公开或 secrets 未就绪时标记 blocked/pending-human。 |
 | 更新客户端交互 | [10.1](./spec.md#spec-req-10-1), [10.2](./spec.md#spec-req-10-2), [10.3](./spec.md#spec-req-10-3), [10.5](./spec.md#spec-req-10-5), [10.6](./spec.md#spec-req-10-6), [10.10](./spec.md#spec-req-10-10), [10.11](./spec.md#spec-req-10-11) | 浏览器无入口无请求；启动静默检查且失败不打扰；手动检查显示最新/可更新/纯文本说明；下载进度与失败重试可见；重启确认可拒绝；15 秒超时按场景静默或报错。 | mock updater 单元测试；Windows 手工使用测试 `latest.json` 验证。 |
 | 更新安全与数据保留 | [10.4](./spec.md#spec-req-10-4), [10.7](./spec.md#spec-req-10-7), [10.8](./spec.md#spec-req-10-8) | 非 HTTPS、无效签名、降级版本被拒绝；有效更新后 identifier 不变且草稿仍可恢复；仓库、日志、安装包中无签名私钥。 | mock 签名/版本异常测试；真实更新演练后检查草稿；`git grep` 与产物解包扫描。 |
 
@@ -100,13 +100,13 @@
 
 - 状态：blocked
 - 验证时间：2026-10-30 13:31（UTC+8）
-- 验证对象：代码提交 `9c742c4`；验证后工作区仅保留本文件的验证记录变更。
+- 验证对象：代码提交 `9c742c4`；架构改为当前仓库公开直发后，代码与验证证据需要刷新。
 - 验证摘要：
   - 通过：`npm run lint`、`npm run format:check`、`npm run typecheck`、`npm run test`（15 个测试文件，39 个测试）、`npm run test:e2e`（6 个浏览器测试）、`npm run build`、`npm run version:check`。
   - 通过：`cargo test --manifest-path src-tauri/Cargo.toml`（1 个原子写入测试）；`cargo check` 与 `npm run tauri build -- --no-bundle` 成功；两个 workflow YAML 可解析。
   - 通过：浏览器 E2E 覆盖无远程字体请求、草稿刷新恢复、必填字段阻断、3000px 透明 PNG 压缩与 1800×2668 导出、1100×760 最大长度排版边界、键盘删除/焦点/重置取消。
   - 通过：`git grep` 未发现私钥材料；updater 公钥仅存在于 `tauri.conf.json`；自动更新代码在非 Tauri 环境隐藏且不请求。
-  - 阻塞：公开 releases 仓库尚未创建，`TAURI_SIGNING_PRIVATE_KEY`、`TAURI_SIGNING_PRIVATE_KEY_PASSWORD`、`RELEASES_TOKEN` 尚未配置到 CI，因此未执行 Windows NSIS 发布、公开 `latest.json` 上传与真实 `0.2.0 → 0.2.1` 更新演练。
+  - 阻塞：当前仓库尚未改为 public，`TAURI_SIGNING_PRIVATE_KEY`、`TAURI_SIGNING_PRIVATE_KEY_PASSWORD` 尚未配置到 CI，因此未执行 Windows NSIS 发布、公开 `latest.json` 上传与真实 `0.2.0 → 0.2.1` 更新演练。
   - 待人工：Windows 上的原生保存对话框、取消保存、只读目录失败恢复，以及真实更新下载/签名校验/重启/草稿保留，需按 README 手工清单验证。
   - 风险提示：开发用签名私钥与密码保存在本机临时目录，需由维护者转入 CI secrets；未完成前不得对外发布自动更新。
-- 新鲜度：current（代码 `9c742c4`；本文件验证记录为验证后的唯一变更）。
+- 新鲜度：stale（架构改为公开仓库直发后需重新执行验证）。

@@ -30,7 +30,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEFCNTBCQjg2REM4RTM1NEIKUldSTE5ZN2NocnRRcTlkTkJjQm9iTGE3S3lGSlNtWlRUT2UyOUdBc2JjVWtmN05kME5IU2Zid2wK",
       "endpoints": [
-        "https://github.com/ccasJay/onlyu-generator-releases/releases/latest/download/latest.json"
+        "https://github.com/ccasJay/onlyu-generator/releases/latest/download/latest.json"
       ]
     }
   },

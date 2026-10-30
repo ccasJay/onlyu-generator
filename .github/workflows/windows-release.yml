@@ -33,10 +33,9 @@ jobs:
               env:
                   TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
                   TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
-                  RELEASES_TOKEN: ${{ secrets.RELEASES_TOKEN }}
               run: |
                   set -euo pipefail
-                  for name in TAURI_SIGNING_PRIVATE_KEY TAURI_SIGNING_PRIVATE_KEY_PASSWORD RELEASES_TOKEN; do
+                  for name in TAURI_SIGNING_PRIVATE_KEY TAURI_SIGNING_PRIVATE_KEY_PASSWORD; do
                     if [ -z "${!name}" ]; then
                       echo "::error::缺少发布所需 secret：$name"
                       exit 1
@@ -64,7 +63,7 @@ jobs:
               with:
                   workspaces: src-tauri
 
-            - name: Build and publish private release
+            - name: Build and publish release
               uses: tauri-apps/tauri-action@v0
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,29 +81,3 @@ jobs:
                   args: --bundles nsis
                   includeUpdaterJson: true
                   updaterJsonPreferNsis: true
-
-            - name: Mirror release to public repository
-              shell: bash
-              env:
-                  SOURCE_REPO: ${{ github.repository }}
-                  SOURCE_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  TARGET_REPO: ${{ vars.RELEASES_REPOSITORY || 'ccasJay/onlyu-generator-releases' }}
-                  TARGET_TOKEN: ${{ secrets.RELEASES_TOKEN }}
-                  TAG: ${{ github.ref_name }}
-              run: |
-                  set -euo pipefail
-                  mkdir -p release-assets
-                  GH_TOKEN="${SOURCE_TOKEN}" gh release download "${TAG}" --repo "${SOURCE_REPO}" --dir release-assets --clobber
-                  node scripts/rewrite-latest-json.mjs release-assets/latest.json "${SOURCE_REPO}" "${TARGET_REPO}"
-
-                  cat > release-notes.md <<'EOF'
-                  OnlyU Generator 自动更新版本。
-
-                  0.1.0 用户需要手动安装一次 0.2.0；自动更新从 0.2.0 起生效。
-                  EOF
-
-                  if GH_TOKEN="${TARGET_TOKEN}" gh release view "${TAG}" --repo "${TARGET_REPO}" >/dev/null 2>&1; then
-                    GH_TOKEN="${TARGET_TOKEN}" gh release upload "${TAG}" release-assets/* --repo "${TARGET_REPO}" --clobber
-                  else
-                    GH_TOKEN="${TARGET_TOKEN}" gh release create "${TAG}" release-assets/* --repo "${TARGET_REPO}" --title "OnlyU Generator ${TAG}" --notes-file release-notes.md --latest
-                  fi

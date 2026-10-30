@@ -72,19 +72,19 @@ npx playwright install chromium
 npm run version:check
 ```
 
-发布标签使用 `v0.2.0` 格式。推送标签后，Windows Release workflow 会构建 NSIS 安装包和 updater 产物，并把安装包、签名文件与 `latest.json` 上传到公开 releases 仓库。
+发布标签使用 `v0.2.0` 格式。推送标签后，Windows Release workflow 会构建 NSIS 安装包和 updater 产物，并把安装包、签名文件与 `latest.json` 发布到当前公开仓库的 Release。
 
 > `0.1.0` 没有自动更新能力，现有用户需要手动安装一次 `0.2.0`；自动更新从 `0.2.0` 起生效。
 
-### 公开 releases 仓库
+### 公开仓库与发布
 
-源码仓库保持私有。自动更新需要一个公开的 releases 仓库，本仓库默认约定为：
+当前源码仓库需要公开，updater 才能匿名读取：
 
 ```text
-ccasJay/onlyu-generator-releases
+https://github.com/ccasJay/onlyu-generator/releases/latest/download/latest.json
 ```
 
-如果使用其他仓库，设置 GitHub Actions 仓库变量 `RELEASES_REPOSITORY`，并同步修改 `src-tauri/tauri.conf.json` 中 updater endpoint。公开仓库只存放安装包、`.sig` 签名和 `latest.json`，不得上传源码。
+公开后应开启分支保护、secret scanning，并限制 tag 推送权限。Release 只应包含安装包、`.sig` 签名和 `latest.json`，不得包含私钥或其他敏感材料。
 
 ### 更新签名密钥
 
@@ -96,13 +96,12 @@ npx tauri signer generate -w ~/.tauri/onlyu.key
 
 将命令输出的公钥写入 `src-tauri/tauri.conf.json` 的 `plugins.updater.pubkey`。私钥和密码只配置到 GitHub Actions secrets：
 
-| Secret                               | 用途                                             |
-| ------------------------------------ | ------------------------------------------------ |
-| `TAURI_SIGNING_PRIVATE_KEY`          | updater 私钥内容                                 |
-| `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | updater 私钥密码                                 |
-| `RELEASES_TOKEN`                     | 对公开 releases 仓库有 contents:write 权限的 PAT |
+| Secret                               | 用途             |
+| ------------------------------------ | ---------------- |
+| `TAURI_SIGNING_PRIVATE_KEY`          | updater 私钥内容 |
+| `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` | updater 私钥密码 |
 
-另需配置仓库变量 `RELEASES_REPOSITORY`（默认 `ccasJay/onlyu-generator-releases`）。私钥不得提交到仓库、写入日志或打包进安装包。
+私钥不得提交到仓库、写入日志或打包进安装包。当前仓库已配置一个开发用公钥，发布前请确认 CI secrets 使用与之匹配的私钥。
 
 ## 手工验证清单
 
@@ -140,4 +139,4 @@ npx tauri signer generate -w ~/.tauri/onlyu.key
 - **图片无法上传**：仅支持 JPG、PNG、WebP，原文件不超过 20MB，压缩后不能超过 8MB。
 - **导出按钮不可用**：等待图片处理完成；若已处理完成，检查照片和姓名是否填写。
 - **原生保存失败**：确认目标目录可写，且文件名未被其他程序占用。
-- **检查更新失败**：确认网络可访问公开 releases 仓库，`latest.json` 与签名文件完整。
+- **检查更新失败**：确认网络可访问公开仓库的 Release，`latest.json` 与签名文件完整。
