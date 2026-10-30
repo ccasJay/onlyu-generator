@@ -99,14 +99,15 @@
 ### Latest Result
 
 - 状态：pending-human
-- 验证时间：2026-10-30 15:12（UTC+8）
-- 验证对象：合并提交 `6372052`，发布标签 `v0.3.0`；上一版 `v0.2.1` 为 `006aaca`。
+- 验证时间：2026-10-30 15:23（UTC+8）
+- 验证对象：合并提交 `484a895`，发布标签 `v0.3.1`；上一版 `v0.3.0` 为 `6372052`。
 - 验证摘要：
-  - 通过：`npm run lint`、`npm run format:check`、`npm run typecheck`、`npm run test`（18 个测试文件，51 个测试）、`npm run test:e2e`（6 个浏览器测试）、`npm run build`、`npm run version:check`。
+  - 通过：`npm run lint`、`npm run format:check`、`npm run typecheck`、`npm run test`（18 个测试文件，52 个测试）、`npm run test:e2e`（6 个浏览器测试）、`npm run build`、`npm run version:check`。
   - 通过：`cargo test --manifest-path src-tauri/Cargo.toml`（1 个原子写入测试）；`cargo check` 与 `npm run tauri build -- --no-bundle` 成功。
-  - 通过：浏览器 E2E 覆盖无远程字体请求、草稿刷新恢复、必填字段阻断、3000px 透明 PNG 压缩与 1800×2668 导出、1100×760 最大长度排版边界、键盘删除/焦点/重置取消、照片缩放 150% 与拖动位置。
-  - 通过：GitHub Actions `Windows Release` 运行 `41017993000` 成功；v0.3.0 公开 Release 包含 `onlyu-generator_0.3.0_x64-setup.exe`（3,712,546 字节）、`.sig` 与 `latest.json`。
-  - 通过：`latest.json` 版本为 `0.3.0`，安装包 URL 指向 `https://github.com/ccasJay/onlyu-generator/releases/download/v0.3.0/...`；仓库已公开且未包含签名私钥。
-  - 新增：照片支持 50%–200% 缩放、在预览中拖动位置、重置照片位置；缩放/偏移写入草稿并参与导出。导出错误现在显示原始 Tauri 错误，并在自定义命令失败时回退到 `fs` 插件写入。
-  - 待人工：在 Windows 上安装 v0.3.0，验证照片拖动与导出位置、原生保存对话框、取消/只读目录失败恢复；以及从 v0.2.1 自动更新到 v0.3.0 的下载/重启/草稿保留。
-- 新鲜度：current（代码 `6372052`；v0.3.0 Release 由同一合并提交的标签构建）。
+  - 通过：浏览器 E2E 覆盖草稿恢复、必填阻断、图片压缩/导出、排版边界、键盘操作、照片缩放 150% 与拖动位置。
+  - 通过：GitHub Actions `Windows Release` 运行 `41019093402` 成功；v0.3.1 公开 Release 包含 `onlyu-generator_0.3.1_x64-setup.exe`（3,709,685 字节）、`.sig` 与 `latest.json`。
+  - 通过：`latest.json` 版本为 `0.3.1`，安装包 URL 指向 `https://github.com/ccasJay/onlyu-generator/releases/download/v0.3.1/...`。
+  - 修复：导出失败的原因为 `html-to-image` 在 Tauri CSP 下无法 `fetch` 同源图片资源；CSP `connect-src` 已加入 `'self' data: blob:`。Tauri 返回的 DOM Event 现在会显示为“图片资源加载失败”而不是 `{"isTrusted":true}`。
+  - 新增：照片支持 50%–200% 缩放、在预览中拖动位置、重置照片位置；缩放/偏移写入草稿并参与导出。导出错误显示原始 Tauri 错误，自定义命令失败时回退 `fs` 插件写入。
+  - 待人工：在 Windows 上安装 v0.3.1，复测导出与保存位置、照片拖动、取消/只读目录失败，以及从 v0.3.0 自动更新到 v0.3.1。
+- 新鲜度：current（代码 `484a895`；v0.3.1 Release 由同一合并提交的标签构建）。
