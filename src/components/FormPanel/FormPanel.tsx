@@ -1,26 +1,14 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useFormStore } from '../../store/useFormStore'
-import { getTemplateById, getDefaultFormData } from '../../templates'
+import { getTemplateById } from '../../templates'
 import ImageUploader from './ImageUploader'
 import TagInput from './TagInput'
 import HighlightsInput from './HighlightsInput'
 import './FormPanel.css'
 
 export default function FormPanel() {
-    const { currentTemplateId, formData, setField, setFormData } = useFormStore()
+    const { currentTemplateId, formData, setField } = useFormStore()
     const template = getTemplateById(currentTemplateId)
-
-    // 切换模板时初始化默认数据
-    useEffect(() => {
-        if (template) {
-            const defaults = getDefaultFormData(template)
-            // 只在首次或切换模板时设置默认值
-            const hasData = Object.keys(formData).length > 0
-            if (!hasData) {
-                setFormData(defaults)
-            }
-        }
-    }, [template, currentTemplateId]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const handleFieldChange = useCallback(
         (key: string, value: string | string[] | null) => {

@@ -7,7 +7,7 @@
   - 实施目标与场景：加入 ESLint flat config、Prettier、Vitest 基础配置与 `lint`、`format:check`、`typecheck`、`test`、`build` 脚本；新增 PR workflow，在 Ubuntu 上以 `npm ci` 执行 lint/typecheck/test/build，并在 `src-tauri` 变更时于 Windows 执行 `cargo check`。场景：故意引入格式或 lint 错误时本地检查失败；修改 Rust 文件时 PR 出现 cargo 检查任务；未修改 Rust 时不触发该任务。
   - 验证手段：运行 `npm run lint && npm run format:check && npm run typecheck && npm run test && npm run build`，并检查 workflow 的路径过滤与失败阻断配置。
 
-- [ ] //TODO 2. 完成草稿持久化闭环与启动恢复：本地存储、hydrate 与损坏回退
+- [x] //TODO 2. 完成草稿持久化闭环与启动恢复：本地存储、hydrate 与损坏回退
   - 落实标准：[1.1](./spec.md#spec-req-1-1), [1.3](./spec.md#spec-req-1-3), [1.4](./spec.md#spec-req-1-4), [1.6](./spec.md#spec-req-1-6), [5.1](./spec.md#spec-req-5-1), [5.2](./spec.md#spec-req-5-2)
   - 实施目标与场景：建立 IndexedDB `drafts`/`images` 仓库与 `hydrationStatus`，启动时先恢复 `currentTemplateId`、字段与照片，恢复完成前不写默认值；损坏或 schema 不支持时回退默认值并提示；模板新增字段用默认值补齐。场景：填写姓名并上传照片后重启应用，1 秒内恢复且不闪现默认值；删除或破坏草稿记录后启动得到默认值与非阻塞提示；模板新增字段后旧草稿仍保留原值。
   - 验证手段：用 `fake-indexeddb` 编写聚焦测试覆盖草稿往返、损坏回退、版本不支持和字段补齐；在 `npm run dev` 中手动刷新验证恢复时序，并用网络面板确认无上传请求。

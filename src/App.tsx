@@ -9,15 +9,20 @@ import './App.css'
 
 function App() {
     const posterRef = useRef<HTMLDivElement>(null)
-    const { currentTemplateId, formData, setFormData, resetForm } = useFormStore()
+    const {
+        currentTemplateId,
+        hydrationStatus,
+        hydrate,
+        notice,
+        dismissNotice,
+        resetForm,
+        setFormData,
+    } = useFormStore()
     const template = getTemplateById(currentTemplateId)
 
-    // 初始化默认数据
     useEffect(() => {
-        if (template && Object.keys(formData).length === 0) {
-            setFormData(getDefaultFormData(template))
-        }
-    }, [template]) // eslint-disable-line react-hooks/exhaustive-deps
+        void hydrate()
+    }, [hydrate])
 
     const handleReset = useCallback(() => {
         if (template && confirm('确定要重置所有内容吗？')) {
@@ -27,6 +32,14 @@ function App() {
             }, 0)
         }
     }, [template, resetForm, setFormData])
+
+    if (hydrationStatus === 'loading') {
+        return (
+            <div className="app-loading" role="status">
+                正在恢复草稿…
+            </div>
+        )
+    }
 
     return (
         <div className="app">
@@ -46,6 +59,19 @@ function App() {
                     <ExportButton posterRef={posterRef} />
                 </div>
             </header>
+
+            {notice && (
+                <div className="app-notice" role="status">
+                    <span>{notice}</span>
+                    <button
+                        className="app-notice-close"
+                        onClick={dismissNotice}
+                        aria-label="关闭提示"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
 
             {/* 主内容区 */}
             <main className="app-main">
