@@ -11,6 +11,10 @@ describe('describeError', () => {
         expect(describeError({ message: '写入失败' })).toBe('写入失败')
     })
 
+    it('describes DOM events such as image load failures', () => {
+        expect(describeError(new Event('error'))).toBe('图片资源加载失败（error）')
+    })
+
     it('falls back for unknown values', () => {
         expect(describeError(undefined)).toBe('未知错误')
         expect(describeError({}, '操作失败')).toBe('操作失败')

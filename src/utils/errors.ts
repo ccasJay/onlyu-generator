@@ -6,6 +6,9 @@ export function describeError(error: unknown, fallback = '未知错误'): string
     if (typeof error === 'string') {
         return error || fallback
     }
+    if (typeof Event !== 'undefined' && error instanceof Event) {
+        return `图片资源加载失败（${error.type || '未知事件'}）`
+    }
     if (typeof error === 'object' && error !== null) {
         if ('message' in error && typeof error.message === 'string' && error.message) {
             return error.message
