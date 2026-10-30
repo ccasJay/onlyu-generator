@@ -1,6 +1,7 @@
 import type { PosterTemplate, TemplateProps } from './types'
 import type { FieldDefinition } from './types'
 import logoImg from '../assets/logo.jpg'
+import { keyItems } from '../utils/listKeys'
 import './template-nanny.css'
 
 /** 家政/育婴师模板字段定义 */
@@ -117,8 +118,8 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
                     <div className="nanny-left-col">
                         {tags.length > 0 && (
                             <ul className={`nanny-tags-list ${tagsDenseClass}`}>
-                                {tags.map((tag, i) => (
-                                    <li key={i} className="nanny-tag-item">
+                                {keyItems(tags).map(({ key: tagKey, value: tag }) => (
+                                    <li key={tagKey} className="nanny-tag-item">
                                         {tag}
                                     </li>
                                 ))}
@@ -157,8 +158,8 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
                     {/* 亮点文案列表（数字序号） */}
                     {highlights.length > 0 && (
                         <ul className={`nanny-highlights-list ${highlightsDenseClass}`}>
-                            {highlights.map((h, i) => (
-                                <li key={i} className="nanny-highlight-row">
+                            {keyItems(highlights).map(({ key: highlightKey, value: h }) => (
+                                <li key={highlightKey} className="nanny-highlight-row">
                                     <span className="nanny-highlight-bullet" />
                                     <span>{h}</span>
                                 </li>

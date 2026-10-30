@@ -9,8 +9,12 @@ interface Props {
 }
 
 export default function ExportButton({ posterRef }: Props) {
-    const { isExporting, isImageProcessing, setExporting, validateForm, setNotice, formData } =
-        useFormStore()
+    const isExporting = useFormStore((state) => state.isExporting)
+    const isImageProcessing = useFormStore((state) => state.isImageProcessing)
+    const setExporting = useFormStore((state) => state.setExporting)
+    const validateForm = useFormStore((state) => state.validateForm)
+    const setNotice = useFormStore((state) => state.setNotice)
+    const name = useFormStore((state) => (state.formData.name as string) || '')
 
     const handleExport = useCallback(async () => {
         if (!posterRef.current || isExporting || isImageProcessing) return
@@ -22,10 +26,7 @@ export default function ExportButton({ posterRef }: Props) {
 
         setExporting(true)
         try {
-            const result = await exportPoster(
-                posterRef.current,
-                (formData.name as string) || '海报'
-            )
+            const result = await exportPoster(posterRef.current, name || '海报')
             if (result === 'saved') {
                 setNotice('海报已保存')
             }
@@ -35,15 +36,7 @@ export default function ExportButton({ posterRef }: Props) {
         } finally {
             setExporting(false)
         }
-    }, [
-        posterRef,
-        isExporting,
-        isImageProcessing,
-        setExporting,
-        validateForm,
-        setNotice,
-        formData.name,
-    ])
+    }, [posterRef, isExporting, isImageProcessing, setExporting, validateForm, setNotice, name])
 
     return (
         <button

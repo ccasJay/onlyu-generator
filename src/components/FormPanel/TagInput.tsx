@@ -1,4 +1,5 @@
 import { useCallback, useId, useState } from 'react'
+import { keyItems } from '../../utils/listKeys'
 import './TagInput.css'
 
 interface Props {
@@ -65,8 +66,8 @@ export default function TagInput({
                 {label}
             </label>
             <div className="tag-input-container">
-                {value.map((tag, i) => (
-                    <span key={i} className="tag-input-tag">
+                {keyItems(value).map(({ key: itemKey, value: tag }, i) => (
+                    <span key={itemKey} className="tag-input-tag">
                         {tag}
                         <button
                             className="tag-input-remove"

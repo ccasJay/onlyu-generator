@@ -1,4 +1,5 @@
 import { useCallback, useId, useState } from 'react'
+import { keyItems } from '../../utils/listKeys'
 import './HighlightsInput.css'
 
 interface Props {
@@ -65,8 +66,8 @@ export default function HighlightsInput({
             {/* 已添加的亮点列表 */}
             {value.length > 0 && (
                 <ul className="highlights-list">
-                    {value.map((item, i) => (
-                        <li key={i} className="highlights-item">
+                    {keyItems(value).map(({ key: itemKey, value: item }, i) => (
+                        <li key={itemKey} className="highlights-item">
                             <span className="highlights-dot"></span>
                             <span className="highlights-text">{item}</span>
                             <button

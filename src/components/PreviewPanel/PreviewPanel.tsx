@@ -8,7 +8,8 @@ interface Props {
 }
 
 export default function PreviewPanel({ posterRef }: Props) {
-    const { currentTemplateId, formData } = useFormStore()
+    const currentTemplateId = useFormStore((state) => state.currentTemplateId)
+    const formData = useFormStore((state) => state.formData)
     const template = getTemplateById(currentTemplateId)
     const viewportRef = useRef<HTMLDivElement>(null)
     const [scale, setScale] = useState(0.45)

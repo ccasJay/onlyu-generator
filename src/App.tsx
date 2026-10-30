@@ -9,7 +9,11 @@ import './App.css'
 
 function App() {
     const posterRef = useRef<HTMLDivElement>(null)
-    const { hydrationStatus, hydrate, notice, dismissNotice, resetCurrentTemplate } = useFormStore()
+    const hydrationStatus = useFormStore((state) => state.hydrationStatus)
+    const hydrate = useFormStore((state) => state.hydrate)
+    const notice = useFormStore((state) => state.notice)
+    const dismissNotice = useFormStore((state) => state.dismissNotice)
+    const resetCurrentTemplate = useFormStore((state) => state.resetCurrentTemplate)
 
     useEffect(() => {
         void hydrate()
