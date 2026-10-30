@@ -6,8 +6,14 @@ import TagInput from './TagInput'
 import HighlightsInput from './HighlightsInput'
 import './FormPanel.css'
 
+const saveStatusLabels = {
+    saving: '保存中…',
+    saved: '已自动保存',
+    error: '保存失败',
+} as const
+
 export default function FormPanel() {
-    const { currentTemplateId, formData, setField } = useFormStore()
+    const { currentTemplateId, formData, setField, saveStatus } = useFormStore()
     const template = getTemplateById(currentTemplateId)
 
     const handleFieldChange = useCallback(
@@ -23,9 +29,19 @@ export default function FormPanel() {
         <div className="form-panel">
             <div className="form-panel-header">
                 <h2 className="form-panel-title">📝 海报内容编辑</h2>
-                <p className="form-panel-subtitle">
-                    {template.name} · {template.width}×{template.height}
-                </p>
+                <div className="form-panel-meta">
+                    <p className="form-panel-subtitle">
+                        {template.name} · {template.width}×{template.height}
+                    </p>
+                    {saveStatus !== 'idle' && (
+                        <span
+                            className={`form-panel-save-status form-panel-save-status--${saveStatus}`}
+                            role="status"
+                        >
+                            {saveStatusLabels[saveStatus]}
+                        </span>
+                    )}
+                </div>
             </div>
 
             <div className="form-panel-fields">

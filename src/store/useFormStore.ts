@@ -16,6 +16,7 @@ import {
 } from './draftRepository'
 
 export type HydrationStatus = 'loading' | 'ready' | 'degraded'
+export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
 interface FormStore {
     /** 当前选中的模板 ID */
@@ -24,6 +25,8 @@ interface FormStore {
     formData: FormData
     /** 草稿恢复状态 */
     hydrationStatus: HydrationStatus
+    /** 自动保存状态 */
+    saveStatus: SaveStatus
     /** 非阻塞提示 */
     notice: string | null
     /** 导出中状态 */
@@ -65,6 +68,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
     currentTemplateId: defaultTemplateId,
     formData: {},
     hydrationStatus: 'loading',
+    saveStatus: 'idle',
     notice: null,
     isExporting: false,
 
@@ -87,10 +91,12 @@ export const useFormStore = create<FormStore>((set, get) => ({
         let notice: string | null =
             storedTemplateId && !storedTemplate ? '上次使用的模板不存在，已切换到默认模板' : null
         let degraded = false
+        let restored = false
 
         try {
             const draft = await loadDraft(template.id)
             if (draft) {
+                restored = true
                 formData = mergeFormDataWithDefaults(template, draft.fields)
                 formData.photo = draft.photo
                 if (draft.warning) {
@@ -107,6 +113,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
             currentTemplateId: template.id,
             formData,
             hydrationStatus: degraded ? 'degraded' : 'ready',
+            saveStatus: restored ? 'saved' : 'idle',
             notice,
         })
     },
@@ -134,14 +141,21 @@ function scheduleSave(templateId: string, formData: FormData, persistImage: bool
     if (saveTimer) clearTimeout(saveTimer)
 
     const token = ++saveToken
+    useFormStore.setState({ saveStatus: 'saving' })
     saveTimer = setTimeout(() => {
         saveTimer = null
-        void saveDraft(templateId, formData, { persistImage }).catch(() => {
-            if (token !== saveToken) return
-            useFormStore.setState({
-                notice: '草稿保存失败，请检查本地存储空间',
+        void saveDraft(templateId, formData, { persistImage })
+            .then(() => {
+                if (token !== saveToken) return
+                useFormStore.setState({ saveStatus: 'saved' })
             })
-        })
+            .catch(() => {
+                if (token !== saveToken) return
+                useFormStore.setState({
+                    saveStatus: 'error',
+                    notice: '草稿保存失败，请检查本地存储空间',
+                })
+            })
     }, 300)
 }
 

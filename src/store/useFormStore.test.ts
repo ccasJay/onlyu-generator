@@ -26,6 +26,7 @@ describe('useFormStore hydration', () => {
             currentTemplateId: 'nanny',
             formData: {},
             hydrationStatus: 'loading',
+            saveStatus: 'idle',
             notice: null,
             isExporting: false,
         })

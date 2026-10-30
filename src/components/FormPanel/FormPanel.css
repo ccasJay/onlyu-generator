@@ -18,9 +18,30 @@
     margin-bottom: 4px;
 }
 
+.form-panel-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+}
+
 .form-panel-subtitle {
     font-size: var(--font-size-xs);
     color: var(--color-text-light);
+}
+
+.form-panel-save-status {
+    flex-shrink: 0;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-light);
+}
+
+.form-panel-save-status--saved {
+    color: var(--color-accent-green);
+}
+
+.form-panel-save-status--error {
+    color: var(--color-primary-dark);
 }
 
 .form-panel-fields {
