@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useId, useState } from 'react'
 import './TagInput.css'
 
 interface Props {
@@ -18,6 +18,7 @@ export default function TagInput({
     maxItems,
     maxLength,
 }: Props) {
+    const inputId = useId()
     const [inputValue, setInputValue] = useState('')
     const [limitError, setLimitError] = useState<string | null>(null)
 
@@ -60,7 +61,9 @@ export default function TagInput({
 
     return (
         <div className="tag-input">
-            <label className="tag-input-label">{label}</label>
+            <label className="tag-input-label" htmlFor={inputId}>
+                {label}
+            </label>
             <div className="tag-input-container">
                 {value.map((tag, i) => (
                     <span key={i} className="tag-input-tag">
@@ -75,6 +78,7 @@ export default function TagInput({
                     </span>
                 ))}
                 <input
+                    id={inputId}
                     className="tag-input-field"
                     value={inputValue}
                     onChange={(e) => {

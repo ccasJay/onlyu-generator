@@ -108,6 +108,19 @@ textarea {
     outline: none;
 }
 
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.image-uploader-dropzone:focus-within {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;

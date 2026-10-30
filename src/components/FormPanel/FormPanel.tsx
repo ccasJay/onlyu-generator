@@ -67,35 +67,51 @@ export default function FormPanel() {
                     />
                 )
 
-            case 'textarea':
+            case 'textarea': {
+                const inputId = `field-${field.key}`
+                const errorId = `${inputId}-error`
                 return (
                     <div className="form-field">
-                        <label className="form-field-label">{field.label}</label>
+                        <label className="form-field-label" htmlFor={inputId}>
+                            {field.label}
+                        </label>
                         <textarea
+                            id={inputId}
                             className="form-field-textarea"
                             value={(formData[field.key] as string) || ''}
                             onChange={(e) => handleFieldChange(field.key, e.target.value)}
                             placeholder={field.placeholder}
                             maxLength={field.maxLength}
                             rows={3}
+                            aria-invalid={Boolean(validationErrors[field.key])}
+                            aria-describedby={validationErrors[field.key] ? errorId : undefined}
                         />
                     </div>
                 )
+            }
 
-            default:
+            default: {
+                const inputId = `field-${field.key}`
+                const errorId = `${inputId}-error`
                 return (
                     <div className="form-field">
-                        <label className="form-field-label">{field.label}</label>
+                        <label className="form-field-label" htmlFor={inputId}>
+                            {field.label}
+                        </label>
                         <input
+                            id={inputId}
                             className="form-field-input"
                             type="text"
                             value={(formData[field.key] as string) || ''}
                             onChange={(e) => handleFieldChange(field.key, e.target.value)}
                             placeholder={field.placeholder}
                             maxLength={field.maxLength}
+                            aria-invalid={Boolean(validationErrors[field.key])}
+                            aria-describedby={validationErrors[field.key] ? errorId : undefined}
                         />
                     </div>
                 )
+            }
         }
     }
 
@@ -125,7 +141,11 @@ export default function FormPanel() {
                     <div key={field.key} className="form-field-slot" data-field-key={field.key}>
                         {renderControl(field)}
                         {validationErrors[field.key] && (
-                            <p className="form-field-error" role="alert">
+                            <p
+                                id={`field-${field.key}-error`}
+                                className="form-field-error"
+                                role="alert"
+                            >
                                 {validationErrors[field.key]}
                             </p>
                         )}

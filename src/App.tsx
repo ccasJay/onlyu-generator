@@ -3,6 +3,7 @@ import FormPanel from './components/FormPanel/FormPanel'
 import PreviewPanel from './components/PreviewPanel/PreviewPanel'
 import ExportButton from './components/ExportButton/ExportButton'
 import { useFormStore } from './store/useFormStore'
+import { confirmAction } from './platform/confirm'
 import logoImg from './assets/logo.jpg'
 import './App.css'
 
@@ -14,9 +15,10 @@ function App() {
         void hydrate()
     }, [hydrate])
 
-    const handleReset = useCallback(() => {
-        if (confirm('确定要重置所有内容吗？')) {
-            void resetCurrentTemplate()
+    const handleReset = useCallback(async () => {
+        const confirmed = await confirmAction('确定要重置所有内容吗？', '重置草稿')
+        if (confirmed) {
+            await resetCurrentTemplate()
         }
     }, [resetCurrentTemplate])
 
@@ -40,7 +42,7 @@ function App() {
                     </div>
                 </div>
                 <div className="app-header-actions">
-                    <button className="app-reset-btn" onClick={handleReset}>
+                    <button className="app-reset-btn" onClick={() => void handleReset()}>
                         🔄 重置
                     </button>
                     <ExportButton posterRef={posterRef} />

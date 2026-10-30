@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useId, useState } from 'react'
 import './HighlightsInput.css'
 
 interface Props {
@@ -18,6 +18,7 @@ export default function HighlightsInput({
     maxItems,
     maxLength,
 }: Props) {
+    const inputId = useId()
     const [inputValue, setInputValue] = useState('')
     const [limitError, setLimitError] = useState<string | null>(null)
 
@@ -57,7 +58,9 @@ export default function HighlightsInput({
 
     return (
         <div className="highlights-input">
-            <label className="highlights-label">{label}</label>
+            <label className="highlights-label" htmlFor={inputId}>
+                {label}
+            </label>
 
             {/* 已添加的亮点列表 */}
             {value.length > 0 && (
@@ -81,6 +84,7 @@ export default function HighlightsInput({
             {/* 输入区 */}
             <div className="highlights-add">
                 <input
+                    id={inputId}
                     className="highlights-field"
                     value={inputValue}
                     onChange={(e) => {
