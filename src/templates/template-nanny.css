@@ -3,8 +3,9 @@
    尺寸: 900 x 1334px
    ============================================ */
 
-/* ---------- 全局色彩变量 ---------- */
-:root {
+/* ========== 海报容器 ========== */
+.nanny-poster {
+    /* 模板色彩变量限定在模板根节点内，避免污染应用框架 */
     --rose-deep: #8b0a3c;
     --rose-mid: #c0134f;
     --rose-bright: #e91e75;
@@ -14,15 +15,12 @@
     --gold-deep: #c9860a;
     --white-pure: #ffffff;
     --white-soft: rgba(255, 255, 255, 0.9);
-}
 
-/* ========== 海报容器 ========== */
-.nanny-poster {
     width: 900px;
     height: 1334px;
     display: flex;
     flex-direction: column;
-    font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-family: var(--font-family);
     overflow: hidden;
     position: relative;
 
@@ -118,12 +116,28 @@
     margin: 0 0 16px 0;
     letter-spacing: 6px;
     line-height: 1.05;
+    overflow-wrap: anywhere;
     /* 多层文字阴影：立体感 */
     text-shadow:
         3px 3px 0px rgba(0, 0, 0, 0.22),
         6px 6px 0px rgba(0, 0, 0, 0.12),
         0 2px 24px rgba(0, 0, 0, 0.2),
         0 0 40px rgba(255, 150, 190, 0.25);
+}
+
+.nanny-main-title--md {
+    font-size: 68px;
+    letter-spacing: 4px;
+}
+
+.nanny-main-title--sm {
+    font-size: 54px;
+    letter-spacing: 3px;
+}
+
+.nanny-main-title--xs {
+    font-size: 48px;
+    letter-spacing: 2px;
 }
 
 /* 姓名行 */
@@ -154,6 +168,11 @@
         0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
+.nanny-name--long {
+    font-size: 56px;
+    letter-spacing: 2px;
+}
+
 /* -------- 身体区 -------- */
 .nanny-body-wrapper {
     position: relative;
@@ -176,6 +195,15 @@
     display: flex;
     flex-direction: column;
     gap: 18px;
+}
+
+.nanny-tags-list--dense {
+    gap: 12px;
+}
+
+.nanny-tags-list--dense .nanny-tag-item {
+    font-size: 30px;
+    padding: 5px 22px 5px 14px;
 }
 
 /* 标签项 — 玻璃胶囊样式 */
@@ -352,6 +380,11 @@
     z-index: 2;
 }
 
+.nanny-salary-text--compact {
+    font-size: 38px;
+    letter-spacing: 1px;
+}
+
 /* ========== 亮点列表 ========== */
 .nanny-highlights-list {
     list-style: none;
@@ -371,6 +404,20 @@
     align-items: center;
     gap: 14px;
     line-height: 1.45;
+}
+
+.nanny-highlight-row > span:last-child {
+    overflow-wrap: anywhere;
+}
+
+.nanny-highlights-list--dense {
+    gap: 8px;
+}
+
+.nanny-highlights-list--dense .nanny-highlight-row {
+    font-size: 38px;
+    letter-spacing: 3px;
+    line-height: 1.35;
 }
 
 /* 亮点序号圆圈（替换原●） */

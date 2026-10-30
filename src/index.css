@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&display=swap');
-
 /* ============================================
    Design System — ONLY YOU 欧利优
    品牌主色: 玫红 #E91E63
@@ -47,7 +45,9 @@
     --space-2xl: 48px;
 
     /* Typography */
-    --font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-family:
+        'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', 'Source Han Sans SC', -apple-system,
+        BlinkMacSystemFont, 'Segoe UI', sans-serif;
     --font-size-xs: 12px;
     --font-size-sm: 13px;
     --font-size-base: 14px;
