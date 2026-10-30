@@ -1,6 +1,7 @@
 import type { PosterTemplate, TemplateProps } from './types'
 import type { FieldDefinition } from './types'
 import logoImg from '../assets/logo.jpg'
+import { keyItems } from '../utils/listKeys'
 import './template-nanny.css'
 
 /** 家政/育婴师模板字段定义 */
@@ -16,6 +17,7 @@ const nannyFields: FieldDefinition[] = [
         label: '城市',
         type: 'text',
         placeholder: '例如：上海',
+        maxLength: 6,
         defaultValue: '上海',
     },
     {
@@ -23,6 +25,7 @@ const nannyFields: FieldDefinition[] = [
         label: '主标题（职位）',
         type: 'text',
         placeholder: '例如：育婴师',
+        maxLength: 8,
         defaultValue: '育婴师',
     },
     {
@@ -31,24 +34,30 @@ const nannyFields: FieldDefinition[] = [
         type: 'text',
         placeholder: '例如：刘阿姨',
         required: true,
+        maxLength: 8,
     },
     {
         key: 'salary',
         label: '薪资说明',
         type: 'text',
         placeholder: '例如：8500元+/26天',
+        maxLength: 16,
     },
     {
         key: 'tags',
         label: '个人标签（逗号分隔）',
         type: 'tags',
         placeholder: '例如：39岁, 上海人, 育婴师',
+        maxItems: 8,
+        maxLength: 6,
     },
     {
         key: 'highlights',
         label: '✨ 亮点文案',
         type: 'highlights',
         placeholder: '例如：310上海本地阿姨，丰富带宝经验',
+        maxItems: 4,
+        maxLength: 24,
     },
 ]
 
@@ -61,6 +70,23 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
     const tags = (data.tags as string[]) || []
     const highlights = (data.highlights as string[]) || []
     const photo = data.photo as string | null
+
+    const mainTitle = `${city}${title}`
+    const titleSizeClass =
+        mainTitle.length > 12
+            ? 'nanny-main-title--xs'
+            : mainTitle.length > 10
+              ? 'nanny-main-title--sm'
+              : mainTitle.length > 8
+                ? 'nanny-main-title--md'
+                : ''
+    const nameSizeClass = name.length > 6 ? 'nanny-name--long' : ''
+    const salarySizeClass = salary.length > 12 ? 'nanny-salary-text--compact' : ''
+    const tagsDenseClass = tags.some((tag) => tag.length > 4) ? 'nanny-tags-list--dense' : ''
+    const highlightsDenseClass =
+        highlights.length >= 3 || highlights.some((item) => item.length > 16)
+            ? 'nanny-highlights-list--dense'
+            : ''
 
     return (
         <div className="nanny-poster">
@@ -76,11 +102,14 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 {/* 主标题 */}
                 <div className="nanny-header">
-                    <h1 className="nanny-main-title">{city}{title}</h1>
+                    <h1 className={`nanny-main-title ${titleSizeClass}`}>
+                        {city}
+                        {title}
+                    </h1>
                     <div className="nanny-subtitle">
                         {/* 金色竖线分隔符 */}
                         <span className="nanny-divider" />
-                        <span className="nanny-name">{name}</span>
+                        <span className={`nanny-name ${nameSizeClass}`}>{name}</span>
                     </div>
                 </div>
 
@@ -88,9 +117,11 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
                     {/* 左列：个人标签 */}
                     <div className="nanny-left-col">
                         {tags.length > 0 && (
-                            <ul className="nanny-tags-list">
-                                {tags.map((tag, i) => (
-                                    <li key={i} className="nanny-tag-item">{tag}</li>
+                            <ul className={`nanny-tags-list ${tagsDenseClass}`}>
+                                {keyItems(tags).map(({ key: tagKey, value: tag }) => (
+                                    <li key={tagKey} className="nanny-tag-item">
+                                        {tag}
+                                    </li>
                                 ))}
                             </ul>
                         )}
@@ -103,7 +134,11 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
                         ) : (
                             <div className="nanny-photo-placeholder-cutout">
                                 <span className="ph-icon">📷</span>
-                                <span className="ph-text">上传照片<br />透明底最佳</span>
+                                <span className="ph-text">
+                                    上传照片
+                                    <br />
+                                    透明底最佳
+                                </span>
                             </div>
                         )}
                     </div>
@@ -116,15 +151,15 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
                     {/* 金色薪资丝带 */}
                     {salary && (
                         <div className="nanny-salary-ribbon">
-                            <span className="nanny-salary-text">{salary}</span>
+                            <span className={`nanny-salary-text ${salarySizeClass}`}>{salary}</span>
                         </div>
                     )}
 
                     {/* 亮点文案列表（数字序号） */}
                     {highlights.length > 0 && (
-                        <ul className="nanny-highlights-list">
-                            {highlights.map((h, i) => (
-                                <li key={i} className="nanny-highlight-row">
+                        <ul className={`nanny-highlights-list ${highlightsDenseClass}`}>
+                            {keyItems(highlights).map(({ key: highlightKey, value: h }) => (
+                                <li key={highlightKey} className="nanny-highlight-row">
                                     <span className="nanny-highlight-bullet" />
                                     <span>{h}</span>
                                 </li>

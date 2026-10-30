@@ -4,7 +4,7 @@
     justify-content: center;
     gap: 8px;
     padding: 10px 24px;
-    background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+    background: linear-gradient(135deg, #e91e63 0%, #c2185b 100%);
     color: #fff;
     font-size: var(--font-size-base);
     font-weight: 600;

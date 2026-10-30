@@ -1,32 +1,39 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import FormPanel from './components/FormPanel/FormPanel'
 import PreviewPanel from './components/PreviewPanel/PreviewPanel'
 import ExportButton from './components/ExportButton/ExportButton'
+import UpdateButton from './components/UpdateButton/UpdateButton'
 import { useFormStore } from './store/useFormStore'
-import { getTemplateById, getDefaultFormData } from './templates'
+import { confirmAction } from './platform/confirm'
 import logoImg from './assets/logo.jpg'
 import './App.css'
 
 function App() {
     const posterRef = useRef<HTMLDivElement>(null)
-    const { currentTemplateId, formData, setFormData, resetForm } = useFormStore()
-    const template = getTemplateById(currentTemplateId)
+    const hydrationStatus = useFormStore((state) => state.hydrationStatus)
+    const hydrate = useFormStore((state) => state.hydrate)
+    const notice = useFormStore((state) => state.notice)
+    const dismissNotice = useFormStore((state) => state.dismissNotice)
+    const resetCurrentTemplate = useFormStore((state) => state.resetCurrentTemplate)
 
-    // 初始化默认数据
     useEffect(() => {
-        if (template && Object.keys(formData).length === 0) {
-            setFormData(getDefaultFormData(template))
-        }
-    }, [template]) // eslint-disable-line react-hooks/exhaustive-deps
+        void hydrate()
+    }, [hydrate])
 
-    const handleReset = useCallback(() => {
-        if (template && confirm('确定要重置所有内容吗？')) {
-            resetForm()
-            setTimeout(() => {
-                setFormData(getDefaultFormData(template))
-            }, 0)
+    const handleReset = useCallback(async () => {
+        const confirmed = await confirmAction('确定要重置所有内容吗？', '重置草稿')
+        if (confirmed) {
+            await resetCurrentTemplate()
         }
-    }, [template, resetForm, setFormData])
+    }, [resetCurrentTemplate])
+
+    if (hydrationStatus === 'loading') {
+        return (
+            <div className="app-loading" role="status">
+                正在恢复草稿…
+            </div>
+        )
+    }
 
     return (
         <div className="app">
@@ -40,12 +47,26 @@ function App() {
                     </div>
                 </div>
                 <div className="app-header-actions">
-                    <button className="app-reset-btn" onClick={handleReset}>
+                    <UpdateButton />
+                    <button className="app-reset-btn" onClick={() => void handleReset()}>
                         🔄 重置
                     </button>
                     <ExportButton posterRef={posterRef} />
                 </div>
             </header>
+
+            {notice && (
+                <div className="app-notice" role="status">
+                    <span>{notice}</span>
+                    <button
+                        className="app-notice-close"
+                        onClick={dismissNotice}
+                        aria-label="关闭提示"
+                    >
+                        ×
+                    </button>
+                </div>
+            )}
 
             {/* 主内容区 */}
             <main className="app-main">

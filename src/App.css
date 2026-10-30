@@ -9,6 +9,41 @@
     overflow: hidden;
 }
 
+.app-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+}
+
+.app-notice {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: 10px var(--space-lg);
+    background: #fff8e1;
+    border-bottom: 1px solid #f0d68a;
+    color: #7a5a00;
+    font-size: var(--font-size-sm);
+}
+
+.app-notice-close {
+    flex-shrink: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 18px;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.app-notice-close:hover {
+    background: rgba(122, 90, 0, 0.08);
+}
+
 /* ---- Header ---- */
 .app-header {
     display: flex;

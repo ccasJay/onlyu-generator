@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
-import { toPng } from 'html-to-image'
-import { saveAs } from 'file-saver'
 import { useFormStore } from '../../store/useFormStore'
+import { exportPoster } from '../../utils/export'
+import { focusFirstInvalidField } from '../../utils/validation'
 import './ExportButton.css'
 
 interface Props {
@@ -9,45 +9,50 @@ interface Props {
 }
 
 export default function ExportButton({ posterRef }: Props) {
-    const { isExporting, setExporting, formData } = useFormStore()
+    const isExporting = useFormStore((state) => state.isExporting)
+    const isImageProcessing = useFormStore((state) => state.isImageProcessing)
+    const setExporting = useFormStore((state) => state.setExporting)
+    const validateForm = useFormStore((state) => state.validateForm)
+    const setNotice = useFormStore((state) => state.setNotice)
+    const name = useFormStore((state) => (state.formData.name as string) || '')
 
     const handleExport = useCallback(async () => {
-        if (!posterRef.current || isExporting) return
+        if (!posterRef.current || isExporting || isImageProcessing) return
+
+        if (!validateForm()) {
+            focusFirstInvalidField(useFormStore.getState().validationErrors)
+            return
+        }
 
         setExporting(true)
         try {
-            const dataUrl = await toPng(posterRef.current, {
-                quality: 1,
-                pixelRatio: 2, // 2 倍清晰度
-                cacheBust: true,
-            })
-
-            const name = (formData.name as string) || '海报'
-            const timestamp = new Date().toISOString().slice(0, 10)
-            saveAs(dataUrl, `${name}_${timestamp}.png`)
-        } catch (err) {
-            console.error('导出失败:', err)
-            alert('导出失败，请重试')
+            const result = await exportPoster(posterRef.current, name || '海报')
+            if (result === 'saved') {
+                setNotice('海报已保存')
+            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : '导出失败，请重试'
+            setNotice(`导出失败：${message}`)
         } finally {
             setExporting(false)
         }
-    }, [posterRef, isExporting, setExporting, formData.name])
+    }, [posterRef, isExporting, isImageProcessing, setExporting, validateForm, setNotice, name])
 
     return (
         <button
-            className={`export-button ${isExporting ? 'export-button--loading' : ''}`}
+            className={`export-button ${isExporting || isImageProcessing ? 'export-button--loading' : ''}`}
             onClick={handleExport}
-            disabled={isExporting}
+            disabled={isExporting || isImageProcessing}
         >
-            {isExporting ? (
+            {isImageProcessing ? (
+                <>⏳ 图片处理中…</>
+            ) : isExporting ? (
                 <>
                     <span className="export-button-spinner"></span>
                     导出中...
                 </>
             ) : (
-                <>
-                    📥 导出海报
-                </>
+                <>📥 导出海报</>
             )}
         </button>
     )

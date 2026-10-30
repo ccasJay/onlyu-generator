@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "onlyu-generator",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identifier": "com.sawyerlau.onlyu",
   "build": {
     "frontendDist": "../dist",
@@ -13,19 +13,33 @@
     "windows": [
       {
         "title": "OnlyU Generator",
-        "width": 800,
-        "height": 600,
+        "width": 1280,
+        "height": 860,
+        "minWidth": 1100,
+        "minHeight": 760,
         "resizable": true,
         "fullscreen": false
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "devCsp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src ipc: http://ipc.localhost ws://localhost:5173 http://localhost:5173; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEFCNTBCQjg2REM4RTM1NEIKUldSTE5ZN2NocnRRcTlkTkJjQm9iTGE3S3lGSlNtWlRUT2UyOUdBc2JjVWtmN05kME5IU2Zid2wK",
+      "endpoints": [
+        "https://github.com/ccasJay/onlyu-generator/releases/latest/download/latest.json"
+      ]
     }
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": [
+      "nsis"
+    ],
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

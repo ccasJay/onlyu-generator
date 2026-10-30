@@ -49,6 +49,18 @@
     background: var(--color-primary);
 }
 
+.image-uploader-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .image-uploader-dropzone {
     display: flex;
     flex-direction: column;
@@ -67,6 +79,27 @@
 .image-uploader-dropzone:hover {
     border-color: var(--color-primary);
     background: #fff;
+}
+
+.image-uploader-dropzone--busy {
+    cursor: wait;
+    opacity: 0.75;
+}
+
+.image-uploader-dropzone--busy:hover {
+    border-color: var(--color-primary-lighter);
+    background: var(--color-primary-bg);
+}
+
+.image-uploader-error {
+    font-size: var(--font-size-xs);
+    line-height: 1.5;
+    color: var(--color-primary-dark);
+}
+
+.image-uploader-clear:disabled {
+    cursor: wait;
+    opacity: 0.6;
 }
 
 .image-uploader-icon {
