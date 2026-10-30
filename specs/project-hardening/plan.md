@@ -98,15 +98,14 @@
 
 ### Latest Result
 
-- 状态：blocked
-- 验证时间：2026-10-30 13:41（UTC+8）
-- 验证对象：代码提交 `d59a860`；验证后工作区仅保留本文件的验证记录变更。
+- 状态：pending-human
+- 验证时间：2026-10-30 13:53（UTC+8）
+- 验证对象：合并提交 `250a92b`，发布标签 `v0.2.0`。
 - 验证摘要：
   - 通过：`npm run lint`、`npm run format:check`、`npm run typecheck`、`npm run test`（15 个测试文件，39 个测试）、`npm run test:e2e`（6 个浏览器测试）、`npm run build`、`npm run version:check`。
   - 通过：`cargo test --manifest-path src-tauri/Cargo.toml`（1 个原子写入测试）；`cargo check` 与 `npm run tauri build -- --no-bundle` 成功；两个 workflow YAML 可解析。
   - 通过：浏览器 E2E 覆盖无远程字体请求、草稿刷新恢复、必填字段阻断、3000px 透明 PNG 压缩与 1800×2668 导出、1100×760 最大长度排版边界、键盘删除/焦点/重置取消。
-  - 通过：`git grep` 未发现私钥材料；updater 公钥仅存在于 `tauri.conf.json`；自动更新代码在非 Tauri 环境隐藏且不请求。
-  - 阻塞：当前仓库尚未改为 public，`TAURI_SIGNING_PRIVATE_KEY`、`TAURI_SIGNING_PRIVATE_KEY_PASSWORD` 尚未配置到 CI，因此未执行 Windows NSIS 发布、公开 `latest.json` 上传与真实 `0.2.0 → 0.2.1` 更新演练。
-  - 待人工：Windows 上的原生保存对话框、取消保存、只读目录失败恢复，以及真实更新下载/签名校验/重启/草稿保留，需按 README 手工清单验证。
-  - 风险提示：开发用签名私钥与密码保存在本机临时目录，需由维护者转入 CI secrets；未完成前不得对外发布自动更新。
-- 新鲜度：current（代码 `d59a860`；公开仓库直发架构的本地自动化验证已重新执行）。
+  - 通过：GitHub Actions `Windows Release` 运行 `41010264892` 成功；公开 Release 包含 `onlyu-generator_0.2.0_x64-setup.exe`（3,527,015 字节）、`.sig` 与 `latest.json`。
+  - 通过：`latest.json` 版本为 `0.2.0`，安装包 URL 指向 `https://github.com/ccasJay/onlyu-generator/releases/download/v0.2.0/...`；清单中的签名与 `.sig` 资产解码后一致；仓库已公开且未包含签名私钥。
+  - 待人工：Windows 上的原生保存对话框、取消保存、只读目录失败恢复，以及实际安装 `0.2.0` 后的更新下载/签名校验/重启/草稿保留。当前 `0.2.0` 已是最新版本，尚未构造 `0.2.1` 测试发布做真实升级演练。
+- 新鲜度：current（代码 `250a92b`；Release 由同一提交的 `v0.2.0` 标签构建）。
