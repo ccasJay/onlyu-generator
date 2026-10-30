@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
-import { toPng } from 'html-to-image'
-import { saveAs } from 'file-saver'
 import { useFormStore } from '../../store/useFormStore'
+import { exportPoster } from '../../utils/export'
 import { focusFirstInvalidField } from '../../utils/validation'
 import './ExportButton.css'
 
@@ -10,7 +9,8 @@ interface Props {
 }
 
 export default function ExportButton({ posterRef }: Props) {
-    const { isExporting, isImageProcessing, setExporting, validateForm, formData } = useFormStore()
+    const { isExporting, isImageProcessing, setExporting, validateForm, setNotice, formData } =
+        useFormStore()
 
     const handleExport = useCallback(async () => {
         if (!posterRef.current || isExporting || isImageProcessing) return
@@ -22,22 +22,28 @@ export default function ExportButton({ posterRef }: Props) {
 
         setExporting(true)
         try {
-            const dataUrl = await toPng(posterRef.current, {
-                quality: 1,
-                pixelRatio: 2, // 2 倍清晰度
-                cacheBust: true,
-            })
-
-            const name = (formData.name as string) || '海报'
-            const timestamp = new Date().toISOString().slice(0, 10)
-            saveAs(dataUrl, `${name}_${timestamp}.png`)
-        } catch (err) {
-            console.error('导出失败:', err)
-            alert('导出失败，请重试')
+            const result = await exportPoster(
+                posterRef.current,
+                (formData.name as string) || '海报'
+            )
+            if (result === 'saved') {
+                setNotice('海报已保存')
+            }
+        } catch (error) {
+            const message = error instanceof Error ? error.message : '导出失败，请重试'
+            setNotice(`导出失败：${message}`)
         } finally {
             setExporting(false)
         }
-    }, [posterRef, isExporting, isImageProcessing, setExporting, validateForm, formData.name])
+    }, [
+        posterRef,
+        isExporting,
+        isImageProcessing,
+        setExporting,
+        validateForm,
+        setNotice,
+        formData.name,
+    ])
 
     return (
         <button

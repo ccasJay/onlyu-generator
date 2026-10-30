@@ -42,6 +42,8 @@ interface FormStore {
     hydrate: () => Promise<void>
     /** 关闭提示 */
     dismissNotice: () => void
+    /** 设置非阻塞提示 */
+    setNotice: (message: string | null) => void
     /** 切换模板；先保存当前模板，再恢复目标模板草稿或默认值 */
     switchTemplate: (id: string) => Promise<void>
     /** 更新单个字段 */
@@ -133,6 +135,8 @@ export const useFormStore = create<FormStore>((set, get) => ({
     },
 
     dismissNotice: () => set({ notice: null }),
+
+    setNotice: (message) => set({ notice: message }),
 
     switchTemplate: async (id) => {
         const current = get()
