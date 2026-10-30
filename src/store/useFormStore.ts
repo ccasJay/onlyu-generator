@@ -32,6 +32,8 @@ interface FormStore {
     notice: string | null
     /** 导出中状态 */
     isExporting: boolean
+    /** 图片处理中状态 */
+    isImageProcessing: boolean
 
     /** 从本地存储恢复草稿 */
     hydrate: () => Promise<void>
@@ -45,6 +47,8 @@ interface FormStore {
     setFormData: (data: FormData) => void
     /** 设置导出状态 */
     setExporting: (v: boolean) => void
+    /** 设置图片处理状态 */
+    setImageProcessing: (v: boolean) => void
     /** 删除当前模板草稿并恢复默认值 */
     resetCurrentTemplate: () => Promise<void>
 }
@@ -72,6 +76,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
     saveStatus: 'idle',
     notice: null,
     isExporting: false,
+    isImageProcessing: false,
 
     hydrate: async () => {
         if (get().hydrationStatus !== 'loading') return
@@ -115,6 +120,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
             formData,
             hydrationStatus: degraded ? 'degraded' : 'ready',
             saveStatus: restored ? 'saved' : 'idle',
+            isImageProcessing: false,
             notice,
         })
     },
@@ -165,6 +171,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
             formData,
             hydrationStatus: 'ready',
             saveStatus: restored ? 'saved' : 'idle',
+            isImageProcessing: false,
             notice,
         })
         suppressNextSave = false
@@ -178,6 +185,8 @@ export const useFormStore = create<FormStore>((set, get) => ({
     setFormData: (data) => set({ formData: data }),
 
     setExporting: (v) => set({ isExporting: v }),
+
+    setImageProcessing: (v) => set({ isImageProcessing: v }),
 
     resetCurrentTemplate: async () => {
         const template = getTemplateById(get().currentTemplateId)
@@ -199,6 +208,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
         set({
             formData: getDefaultFormData(template),
             saveStatus: 'idle',
+            isImageProcessing: false,
             notice: null,
         })
         suppressNextSave = false

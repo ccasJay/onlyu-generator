@@ -13,7 +13,7 @@ const saveStatusLabels = {
 } as const
 
 export default function FormPanel() {
-    const { currentTemplateId, formData, setField, saveStatus } = useFormStore()
+    const { currentTemplateId, formData, setField, saveStatus, setImageProcessing } = useFormStore()
     const template = getTemplateById(currentTemplateId)
 
     const handleFieldChange = useCallback(
@@ -54,6 +54,7 @@ export default function FormPanel() {
                                     label={field.label}
                                     value={(formData[field.key] as string | null) ?? null}
                                     onChange={(v) => handleFieldChange(field.key, v)}
+                                    onBusyChange={setImageProcessing}
                                 />
                             )
 

@@ -69,6 +69,27 @@
     background: #fff;
 }
 
+.image-uploader-dropzone--busy {
+    cursor: wait;
+    opacity: 0.75;
+}
+
+.image-uploader-dropzone--busy:hover {
+    border-color: var(--color-primary-lighter);
+    background: var(--color-primary-bg);
+}
+
+.image-uploader-error {
+    font-size: var(--font-size-xs);
+    line-height: 1.5;
+    color: var(--color-primary-dark);
+}
+
+.image-uploader-clear:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
 .image-uploader-icon {
     font-size: 28px;
 }

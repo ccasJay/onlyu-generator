@@ -9,10 +9,10 @@ interface Props {
 }
 
 export default function ExportButton({ posterRef }: Props) {
-    const { isExporting, setExporting, formData } = useFormStore()
+    const { isExporting, isImageProcessing, setExporting, formData } = useFormStore()
 
     const handleExport = useCallback(async () => {
-        if (!posterRef.current || isExporting) return
+        if (!posterRef.current || isExporting || isImageProcessing) return
 
         setExporting(true)
         try {
@@ -31,15 +31,17 @@ export default function ExportButton({ posterRef }: Props) {
         } finally {
             setExporting(false)
         }
-    }, [posterRef, isExporting, setExporting, formData.name])
+    }, [posterRef, isExporting, isImageProcessing, setExporting, formData.name])
 
     return (
         <button
-            className={`export-button ${isExporting ? 'export-button--loading' : ''}`}
+            className={`export-button ${isExporting || isImageProcessing ? 'export-button--loading' : ''}`}
             onClick={handleExport}
-            disabled={isExporting}
+            disabled={isExporting || isImageProcessing}
         >
-            {isExporting ? (
+            {isImageProcessing ? (
+                <>⏳ 图片处理中…</>
+            ) : isExporting ? (
                 <>
                     <span className="export-button-spinner"></span>
                     导出中...
