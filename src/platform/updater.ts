@@ -1,6 +1,6 @@
-import { isTauri } from '@tauri-apps/api/core'
 import { check, type Update } from '@tauri-apps/plugin-updater'
 import { relaunch } from '@tauri-apps/plugin-process'
+import { isTauriRuntime } from './runtime'
 
 export interface UpdateInfo {
     version: string
@@ -37,7 +37,7 @@ export function isNewerVersion(latest: string, current: string): boolean {
 }
 
 export function canCheckForUpdates(): boolean {
-    return isTauri()
+    return isTauriRuntime()
 }
 
 /** 检查更新；超时或非 Tauri 环境返回 null/抛错，由调用方决定是否静默 */

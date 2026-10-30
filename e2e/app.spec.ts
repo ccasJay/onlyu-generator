@@ -66,6 +66,12 @@ test('supports keyboard tag removal, visible focus, and cancelable reset', async
 })
 
 test('compresses a large transparent PNG and exports a 2x PNG', async ({ page }) => {
+    await page.addInitScript(() => {
+        Object.defineProperty(window, 'showSaveFilePicker', {
+            value: undefined,
+            configurable: true,
+        })
+    })
     await page.goto('/')
 
     const dataUrl = await page.evaluate(() => {

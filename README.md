@@ -61,7 +61,7 @@ npx playwright install chromium
 
 ## 版本与发布
 
-当前版本基线为 `0.2.0`。发布前确认以下文件版本一致：
+当前版本为 `0.2.1`。发布前确认以下文件版本一致：
 
 - `package.json`
 - `package-lock.json` 根版本
@@ -72,7 +72,7 @@ npx playwright install chromium
 npm run version:check
 ```
 
-发布标签使用 `v0.2.0` 格式。推送标签后，Windows Release workflow 会构建 NSIS 安装包和 updater 产物，并把安装包、签名文件与 `latest.json` 发布到当前公开仓库的 Release。
+发布标签使用 `v0.2.1` 格式。推送标签后，Windows Release workflow 会构建 NSIS 安装包和 updater 产物，并把安装包、签名文件与 `latest.json` 发布到当前公开仓库的 Release。
 
 > `0.1.0` 没有自动更新能力，现有用户需要手动安装一次 `0.2.0`；自动更新从 `0.2.0` 起生效。
 
