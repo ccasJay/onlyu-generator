@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { resetDraftDatabase, saveDraft, writeCurrentTemplateId } from './draftRepository'
-import { useFormStore } from './useFormStore'
+import { flushDraftAutosave, useFormStore } from './useFormStore'
 
 async function overwriteDraftRecord(record: unknown): Promise<void> {
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -20,6 +20,7 @@ async function overwriteDraftRecord(record: unknown): Promise<void> {
 
 describe('useFormStore hydration', () => {
     beforeEach(async () => {
+        await flushDraftAutosave()
         await resetDraftDatabase()
         localStorage.clear()
         useFormStore.setState({

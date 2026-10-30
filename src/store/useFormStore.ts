@@ -7,6 +7,7 @@ import {
     templates,
 } from '../templates'
 import {
+    deleteDraft,
     DraftCorruptionError,
     DraftSchemaError,
     loadDraft,
@@ -36,16 +37,16 @@ interface FormStore {
     hydrate: () => Promise<void>
     /** 关闭提示 */
     dismissNotice: () => void
-    /** 设置当前模板 */
-    setTemplate: (id: string) => void
+    /** 切换模板；先保存当前模板，再恢复目标模板草稿或默认值 */
+    switchTemplate: (id: string) => Promise<void>
     /** 更新单个字段 */
     setField: (key: string, value: string | string[] | null) => void
     /** 批量设置表单数据（切换模板时用） */
     setFormData: (data: FormData) => void
     /** 设置导出状态 */
     setExporting: (v: boolean) => void
-    /** 重置表单 */
-    resetForm: () => void
+    /** 删除当前模板草稿并恢复默认值 */
+    resetCurrentTemplate: () => Promise<void>
 }
 
 const defaultTemplateId = templates[0]?.id ?? 'nanny'
@@ -120,7 +121,54 @@ export const useFormStore = create<FormStore>((set, get) => ({
 
     dismissNotice: () => set({ notice: null }),
 
-    setTemplate: (id) => set({ currentTemplateId: id }),
+    switchTemplate: async (id) => {
+        const current = get()
+        if (id === current.currentTemplateId) return
+
+        const target = getTemplateById(id)
+        if (!target) {
+            set({ notice: `模板 ${id} 不存在，已保留当前模板` })
+            return
+        }
+
+        const saved = await flushPendingSave()
+        if (!saved) {
+            set({
+                saveStatus: 'error',
+                notice: '当前草稿保存失败，暂时无法切换模板',
+            })
+            return
+        }
+
+        let formData = getDefaultFormData(target)
+        let notice: string | null = null
+        let restored = false
+
+        try {
+            const draft = await loadDraft(target.id)
+            if (draft) {
+                restored = true
+                formData = mergeFormDataWithDefaults(target, draft.fields)
+                formData.photo = draft.photo
+                if (draft.warning) {
+                    notice = draft.warning
+                }
+            }
+        } catch (error) {
+            notice = describeLoadError(error)
+        }
+
+        writeCurrentTemplateId(target.id)
+        suppressNextSave = true
+        set({
+            currentTemplateId: target.id,
+            formData,
+            hydrationStatus: 'ready',
+            saveStatus: restored ? 'saved' : 'idle',
+            notice,
+        })
+        suppressNextSave = false
+    },
 
     setField: (key, value) =>
         set((state) => ({
@@ -131,32 +179,96 @@ export const useFormStore = create<FormStore>((set, get) => ({
 
     setExporting: (v) => set({ isExporting: v }),
 
-    resetForm: () => set({ formData: {} }),
+    resetCurrentTemplate: async () => {
+        const template = getTemplateById(get().currentTemplateId)
+        if (!template) {
+            set({ notice: '当前模板不存在，无法重置' })
+            return
+        }
+
+        await flushPendingSave()
+
+        try {
+            await deleteDraft(template.id)
+        } catch {
+            set({ notice: '重置失败，请检查本地存储空间' })
+            return
+        }
+
+        suppressNextSave = true
+        set({
+            formData: getDefaultFormData(template),
+            saveStatus: 'idle',
+            notice: null,
+        })
+        suppressNextSave = false
+    },
 }))
+
+interface PendingSave {
+    templateId: string
+    formData: FormData
+    persistImage: boolean
+    token: number
+}
 
 let saveTimer: ReturnType<typeof setTimeout> | null = null
 let saveToken = 0
+let pendingSave: PendingSave | null = null
+let suppressNextSave = false
+
+async function performSave(pending: PendingSave): Promise<boolean> {
+    try {
+        await saveDraft(pending.templateId, pending.formData, {
+            persistImage: pending.persistImage,
+        })
+        if (pending.token === saveToken) {
+            useFormStore.setState({ saveStatus: 'saved' })
+        }
+        return true
+    } catch {
+        if (pending.token === saveToken) {
+            useFormStore.setState({
+                saveStatus: 'error',
+                notice: '草稿保存失败，请检查本地存储空间',
+            })
+        }
+        return false
+    }
+}
 
 function scheduleSave(templateId: string, formData: FormData, persistImage: boolean): void {
     if (saveTimer) clearTimeout(saveTimer)
 
     const token = ++saveToken
+    pendingSave = { templateId, formData, persistImage, token }
     useFormStore.setState({ saveStatus: 'saving' })
     saveTimer = setTimeout(() => {
         saveTimer = null
-        void saveDraft(templateId, formData, { persistImage })
-            .then(() => {
-                if (token !== saveToken) return
-                useFormStore.setState({ saveStatus: 'saved' })
-            })
-            .catch(() => {
-                if (token !== saveToken) return
-                useFormStore.setState({
-                    saveStatus: 'error',
-                    notice: '草稿保存失败，请检查本地存储空间',
-                })
-            })
+        const pending = pendingSave
+        pendingSave = null
+        if (pending) {
+            void performSave(pending)
+        }
     }, 300)
+}
+
+async function flushPendingSave(): Promise<boolean> {
+    if (saveTimer) {
+        clearTimeout(saveTimer)
+        saveTimer = null
+    }
+
+    const pending = pendingSave
+    pendingSave = null
+    if (!pending) return true
+
+    return performSave(pending)
+}
+
+/** 立即完成当前待保存的草稿；用于切换模板、关闭前或测试隔离 */
+export async function flushDraftAutosave(): Promise<boolean> {
+    return flushPendingSave()
 }
 
 useFormStore.subscribe((state, previous) => {
@@ -166,6 +278,10 @@ useFormStore.subscribe((state, previous) => {
         state.formData === previous.formData &&
         state.currentTemplateId === previous.currentTemplateId
     ) {
+        return
+    }
+    if (suppressNextSave) {
+        suppressNextSave = false
         return
     }
 

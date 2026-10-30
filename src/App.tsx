@@ -3,35 +3,22 @@ import FormPanel from './components/FormPanel/FormPanel'
 import PreviewPanel from './components/PreviewPanel/PreviewPanel'
 import ExportButton from './components/ExportButton/ExportButton'
 import { useFormStore } from './store/useFormStore'
-import { getTemplateById, getDefaultFormData } from './templates'
 import logoImg from './assets/logo.jpg'
 import './App.css'
 
 function App() {
     const posterRef = useRef<HTMLDivElement>(null)
-    const {
-        currentTemplateId,
-        hydrationStatus,
-        hydrate,
-        notice,
-        dismissNotice,
-        resetForm,
-        setFormData,
-    } = useFormStore()
-    const template = getTemplateById(currentTemplateId)
+    const { hydrationStatus, hydrate, notice, dismissNotice, resetCurrentTemplate } = useFormStore()
 
     useEffect(() => {
         void hydrate()
     }, [hydrate])
 
     const handleReset = useCallback(() => {
-        if (template && confirm('确定要重置所有内容吗？')) {
-            resetForm()
-            setTimeout(() => {
-                setFormData(getDefaultFormData(template))
-            }, 0)
+        if (confirm('确定要重置所有内容吗？')) {
+            void resetCurrentTemplate()
         }
-    }, [template, resetForm, setFormData])
+    }, [resetCurrentTemplate])
 
     if (hydrationStatus === 'loading') {
         return (

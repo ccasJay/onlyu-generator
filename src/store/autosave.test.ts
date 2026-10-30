@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getDefaultFormData, getTemplateById } from '../templates'
 import { loadDraft, resetDraftDatabase } from './draftRepository'
-import { useFormStore, type SaveStatus } from './useFormStore'
+import { flushDraftAutosave, useFormStore, type SaveStatus } from './useFormStore'
 
 const template = getTemplateById('nanny')!
 
@@ -18,6 +18,7 @@ async function waitForStatus(expected: SaveStatus, timeout = 2000): Promise<void
 
 describe('autosave', () => {
     beforeEach(async () => {
+        await flushDraftAutosave()
         await resetDraftDatabase()
         localStorage.clear()
         useFormStore.setState({
