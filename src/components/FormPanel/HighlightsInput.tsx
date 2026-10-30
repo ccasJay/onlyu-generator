@@ -47,10 +47,7 @@ export default function HighlightsInput({ label, value, onChange, placeholder }:
                         <li key={i} className="highlights-item">
                             <span className="highlights-dot"></span>
                             <span className="highlights-text">{item}</span>
-                            <button
-                                className="highlights-remove"
-                                onClick={() => handleRemove(i)}
-                            >
+                            <button className="highlights-remove" onClick={() => handleRemove(i)}>
                                 ×
                             </button>
                         </li>

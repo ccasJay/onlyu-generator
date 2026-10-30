@@ -2,7 +2,7 @@
 
 ## 任务清单
 
-- [ ] //TODO 1. 完成工程基线：Lint、格式化、类型检查、基础测试与 PR 门禁
+- [x] //TODO 1. 完成工程基线：Lint、格式化、类型检查、基础测试与 PR 门禁
   - 落实标准：[8.1](./spec.md#spec-req-8-1), [8.2](./spec.md#spec-req-8-2)
   - 实施目标与场景：加入 ESLint flat config、Prettier、Vitest 基础配置与 `lint`、`format:check`、`typecheck`、`test`、`build` 脚本；新增 PR workflow，在 Ubuntu 上以 `npm ci` 执行 lint/typecheck/test/build，并在 `src-tauri` 变更时于 Windows 执行 `cargo check`。场景：故意引入格式或 lint 错误时本地检查失败；修改 Rust 文件时 PR 出现 cargo 检查任务；未修改 Rust 时不触发该任务。
   - 验证手段：运行 `npm run lint && npm run format:check && npm run typecheck && npm run test && npm run build`，并检查 workflow 的路径过滤与失败阻断配置。

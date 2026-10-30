@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback, useState } from 'react'
+import { useRef, useEffect, useCallback } from 'react'
 import FormPanel from './components/FormPanel/FormPanel'
 import PreviewPanel from './components/PreviewPanel/PreviewPanel'
 import ExportButton from './components/ExportButton/ExportButton'

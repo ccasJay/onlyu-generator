@@ -45,9 +45,7 @@ export default function ExportButton({ posterRef }: Props) {
                     导出中...
                 </>
             ) : (
-                <>
-                    📥 导出海报
-                </>
+                <>📥 导出海报</>
             )}
         </button>
     )

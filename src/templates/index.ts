@@ -2,9 +2,7 @@ import { nannyTemplate } from './template-nanny'
 import type { PosterTemplate } from './types'
 
 /** 所有可用模板列表 */
-export const templates: PosterTemplate[] = [
-    nannyTemplate,
-]
+export const templates: PosterTemplate[] = [nannyTemplate]
 
 /** 根据 ID 获取模板 */
 export function getTemplateById(id: string): PosterTemplate | undefined {
@@ -12,7 +10,9 @@ export function getTemplateById(id: string): PosterTemplate | undefined {
 }
 
 /** 获取模板默认表单数据 */
-export function getDefaultFormData(template: PosterTemplate): Record<string, string | string[] | null> {
+export function getDefaultFormData(
+    template: PosterTemplate
+): Record<string, string | string[] | null> {
     const data: Record<string, string | string[] | null> = {}
     for (const field of template.fields) {
         if (field.defaultValue !== undefined) {

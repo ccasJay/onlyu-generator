@@ -5,15 +5,15 @@
 
 /* ---------- 全局色彩变量 ---------- */
 :root {
-    --rose-deep: #8B0A3C;
-    --rose-mid: #C0134F;
-    --rose-bright: #E91E75;
-    --rose-light: #F06292;
-    --gold-light: #FFE5A0;
-    --gold-mid: #F5C842;
-    --gold-deep: #C9860A;
-    --white-pure: #FFFFFF;
-    --white-soft: rgba(255, 255, 255, 0.90);
+    --rose-deep: #8b0a3c;
+    --rose-mid: #c0134f;
+    --rose-bright: #e91e75;
+    --rose-light: #f06292;
+    --gold-light: #ffe5a0;
+    --gold-mid: #f5c842;
+    --gold-deep: #c9860a;
+    --white-pure: #ffffff;
+    --white-soft: rgba(255, 255, 255, 0.9);
 }
 
 /* ========== 海报容器 ========== */
@@ -30,7 +30,7 @@
     background:
         radial-gradient(ellipse 120% 60% at 20% 0%, rgba(255, 120, 170, 0.25) 0%, transparent 55%),
         radial-gradient(ellipse 80% 80% at 90% 110%, rgba(80, 0, 30, 0.55) 0%, transparent 60%),
-        linear-gradient(160deg, #9B0A3A 0%, #C5185A 38%, #D93070 62%, #A01040 100%);
+        linear-gradient(160deg, #9b0a3a 0%, #c5185a 38%, #d93070 62%, #a01040 100%);
 }
 
 /* ========== 背景装饰层 ========== */
@@ -91,12 +91,14 @@
     left: 0;
     width: 100%;
     height: 8px;
-    background: linear-gradient(90deg,
-            transparent 0%,
-            var(--gold-mid) 30%,
-            var(--gold-light) 50%,
-            var(--gold-mid) 70%,
-            transparent 100%);
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        var(--gold-mid) 30%,
+        var(--gold-light) 50%,
+        var(--gold-mid) 70%,
+        transparent 100%
+    );
     z-index: 10;
 }
 
@@ -120,7 +122,7 @@
     text-shadow:
         3px 3px 0px rgba(0, 0, 0, 0.22),
         6px 6px 0px rgba(0, 0, 0, 0.12),
-        0 2px 24px rgba(0, 0, 0, 0.20),
+        0 2px 24px rgba(0, 0, 0, 0.2),
         0 0 40px rgba(255, 150, 190, 0.25);
 }
 
@@ -148,8 +150,8 @@
     font-weight: 800;
     letter-spacing: 4px;
     text-shadow:
-        2px 2px 0px rgba(0, 0, 0, 0.20),
-        0 4px 20px rgba(0, 0, 0, 0.20);
+        2px 2px 0px rgba(0, 0, 0, 0.2),
+        0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* -------- 身体区 -------- */
@@ -187,7 +189,7 @@
     /* 半透明玻璃背景 */
     background: rgba(255, 255, 255, 0.14);
     backdrop-filter: blur(6px);
-    border: 1.5px solid rgba(255, 255, 255, 0.30);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
     border-radius: 100px;
     padding: 6px 28px 6px 18px;
     box-shadow:
@@ -270,7 +272,7 @@
 
 /* 白色信息卡片：纯白 + 玫红顶边高光 */
 .nanny-info-card {
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: 28px;
     position: relative;
     padding: 64px 44px 36px;
@@ -300,13 +302,15 @@
     left: 50%;
     transform: translateX(-50%);
     /* 金色渐变 */
-    background: linear-gradient(90deg,
-            var(--gold-deep) 0%,
-            var(--gold-mid) 30%,
-            var(--gold-light) 50%,
-            var(--gold-mid) 70%,
-            var(--gold-deep) 100%);
-    color: #6B3A00;
+    background: linear-gradient(
+        90deg,
+        var(--gold-deep) 0%,
+        var(--gold-mid) 30%,
+        var(--gold-light) 50%,
+        var(--gold-mid) 70%,
+        var(--gold-deep) 100%
+    );
+    color: #6b3a00;
     padding: 10px 52px;
     font-size: 46px;
     font-weight: 900;
@@ -315,7 +319,7 @@
     align-items: center;
     box-shadow:
         0 6px 20px rgba(180, 110, 0, 0.45),
-        0 2px 6px rgba(0, 0, 0, 0.20),
+        0 2px 6px rgba(0, 0, 0, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.55);
     white-space: nowrap;
     letter-spacing: 2px;
@@ -360,7 +364,7 @@
 
 .nanny-highlight-row {
     font-size: 44px;
-    color: #D63A78;
+    color: #d63a78;
     font-weight: 800;
     letter-spacing: 6px;
     display: flex;

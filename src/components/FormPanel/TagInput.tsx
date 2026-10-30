@@ -41,10 +41,7 @@ export default function TagInput({ label, value, onChange, placeholder }: Props)
                 {value.map((tag, i) => (
                     <span key={i} className="tag-input-tag">
                         {tag}
-                        <button
-                            className="tag-input-remove"
-                            onClick={() => handleRemove(i)}
-                        >
+                        <button className="tag-input-remove" onClick={() => handleRemove(i)}>
                             ×
                         </button>
                     </span>

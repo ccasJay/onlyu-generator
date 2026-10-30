@@ -1,43 +1,43 @@
 name: Windows Release
 
 on:
-  push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
+    push:
+        tags:
+            - 'v*'
+    workflow_dispatch:
 
 jobs:
-  release:
-    permissions:
-      contents: write
-    runs-on: windows-latest
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    release:
+        permissions:
+            contents: write
+        runs-on: windows-latest
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          
-      - name: Install dependencies
-        run: npm install
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
 
-      - name: Install Rust Stable
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: x86_64-pc-windows-msvc
+            - name: Install Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
 
-      - name: Build and Release Tauri App
-        uses: tauri-apps/tauri-action@v0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tagName: app-v__VERSION__ # the action automatically replaces __VERSION__ with the app version
-          releaseName: "OnlyU Generator v__VERSION__"
-          releaseBody: |
-            ## OnlyU Generator Releases
-            See the assets below to download and install the Windows version.
-          releaseDraft: false
-          prerelease: false
+            - name: Install dependencies
+              run: npm install
+
+            - name: Install Rust Stable
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  targets: x86_64-pc-windows-msvc
+
+            - name: Build and Release Tauri App
+              uses: tauri-apps/tauri-action@v0
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tagName: app-v__VERSION__ # the action automatically replaces __VERSION__ with the app version
+                  releaseName: 'OnlyU Generator v__VERSION__'
+                  releaseBody: |
+                      ## OnlyU Generator Releases
+                      See the assets below to download and install the Windows version.
+                  releaseDraft: false
+                  prerelease: false

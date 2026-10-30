@@ -76,7 +76,10 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                 {/* 主标题 */}
                 <div className="nanny-header">
-                    <h1 className="nanny-main-title">{city}{title}</h1>
+                    <h1 className="nanny-main-title">
+                        {city}
+                        {title}
+                    </h1>
                     <div className="nanny-subtitle">
                         {/* 金色竖线分隔符 */}
                         <span className="nanny-divider" />
@@ -90,7 +93,9 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
                         {tags.length > 0 && (
                             <ul className="nanny-tags-list">
                                 {tags.map((tag, i) => (
-                                    <li key={i} className="nanny-tag-item">{tag}</li>
+                                    <li key={i} className="nanny-tag-item">
+                                        {tag}
+                                    </li>
                                 ))}
                             </ul>
                         )}
@@ -103,7 +108,11 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
                         ) : (
                             <div className="nanny-photo-placeholder-cutout">
                                 <span className="ph-icon">📷</span>
-                                <span className="ph-text">上传照片<br />透明底最佳</span>
+                                <span className="ph-text">
+                                    上传照片
+                                    <br />
+                                    透明底最佳
+                                </span>
                             </div>
                         )}
                     </div>

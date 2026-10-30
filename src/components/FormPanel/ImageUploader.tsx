@@ -43,12 +43,7 @@ export default function ImageUploader({ label, value, onChange }: Props) {
                     </div>
                 ) : (
                     <label className="image-uploader-dropzone">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleChange}
-                            hidden
-                        />
+                        <input type="file" accept="image/*" onChange={handleChange} hidden />
                         <span className="image-uploader-icon">📷</span>
                         <span className="image-uploader-text">点击上传图片</span>
                         <span className="image-uploader-hint">支持 JPG、PNG 格式</span>

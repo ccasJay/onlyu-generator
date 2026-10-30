@@ -35,7 +35,9 @@ export default function FormPanel() {
         <div className="form-panel">
             <div className="form-panel-header">
                 <h2 className="form-panel-title">📝 海报内容编辑</h2>
-                <p className="form-panel-subtitle">{template.name} · {template.width}×{template.height}</p>
+                <p className="form-panel-subtitle">
+                    {template.name} · {template.width}×{template.height}
+                </p>
             </div>
 
             <div className="form-panel-fields">
@@ -80,7 +82,9 @@ export default function FormPanel() {
                                     <textarea
                                         className="form-field-textarea"
                                         value={(formData[field.key] as string) || ''}
-                                        onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                                        onChange={(e) =>
+                                            handleFieldChange(field.key, e.target.value)
+                                        }
                                         placeholder={field.placeholder}
                                         rows={3}
                                     />
@@ -95,7 +99,9 @@ export default function FormPanel() {
                                         className="form-field-input"
                                         type="text"
                                         value={(formData[field.key] as string) || ''}
-                                        onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                                        onChange={(e) =>
+                                            handleFieldChange(field.key, e.target.value)
+                                        }
                                         placeholder={field.placeholder}
                                     />
                                 </div>
