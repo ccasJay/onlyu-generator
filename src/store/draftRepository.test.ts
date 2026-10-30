@@ -61,6 +61,26 @@ describe('draft repository', () => {
         expect(loaded?.warning).toBeNull()
     })
 
+    it('round-trips photo transform and defaults it for old drafts', async () => {
+        await saveDraft('nanny', sampleForm, {
+            photoTransform: { scale: 1.5, offsetX: 24, offsetY: -36 },
+        })
+
+        const loaded = await loadDraft('nanny')
+        expect(loaded?.photoTransform).toEqual({ scale: 1.5, offsetX: 24, offsetY: -36 })
+
+        await overwriteDraftRecord({
+            schemaVersion: 1,
+            templateId: 'nanny',
+            fields: { name: '旧草稿' },
+            photoId: null,
+            updatedAt: 1,
+        })
+
+        const oldDraft = await loadDraft('nanny')
+        expect(oldDraft?.photoTransform).toEqual({ scale: 1, offsetX: 0, offsetY: 0 })
+    })
+
     it('keeps the stored photo when only text changes', async () => {
         await saveDraft('nanny', sampleForm)
         await saveDraft('nanny', { ...sampleForm, name: '王阿姨' }, { persistImage: false })

@@ -1,7 +1,15 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useFormStore } from '../../store/useFormStore'
 import { getTemplateById } from '../../templates'
 import './PreviewPanel.css'
+
+interface DragState {
+    pointerId: number
+    startX: number
+    startY: number
+    offsetX: number
+    offsetY: number
+}
 
 interface Props {
     posterRef: React.RefObject<HTMLDivElement | null>
@@ -10,8 +18,11 @@ interface Props {
 export default function PreviewPanel({ posterRef }: Props) {
     const currentTemplateId = useFormStore((state) => state.currentTemplateId)
     const formData = useFormStore((state) => state.formData)
+    const photoTransform = useFormStore((state) => state.photoTransform)
+    const setPhotoTransform = useFormStore((state) => state.setPhotoTransform)
     const template = getTemplateById(currentTemplateId)
     const viewportRef = useRef<HTMLDivElement>(null)
+    const dragRef = useRef<DragState | null>(null)
     const [scale, setScale] = useState(0.45)
 
     // 根据视口大小动态计算缩放比例
@@ -38,6 +49,44 @@ export default function PreviewPanel({ posterRef }: Props) {
         return () => observer.disconnect()
     }, [template])
 
+    const handlePhotoPointerDown = useCallback(
+        (event: React.PointerEvent<HTMLImageElement>) => {
+            if (!formData.photo) return
+            event.preventDefault()
+            event.currentTarget.setPointerCapture(event.pointerId)
+            dragRef.current = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+                offsetX: photoTransform.offsetX,
+                offsetY: photoTransform.offsetY,
+            }
+        },
+        [formData.photo, photoTransform.offsetX, photoTransform.offsetY]
+    )
+
+    const handlePhotoPointerMove = useCallback(
+        (event: React.PointerEvent<HTMLImageElement>) => {
+            const drag = dragRef.current
+            if (!drag || drag.pointerId !== event.pointerId) return
+
+            const previewScale = Math.max(scale, 0.01)
+            setPhotoTransform({
+                offsetX: drag.offsetX + (event.clientX - drag.startX) / previewScale,
+                offsetY: drag.offsetY + (event.clientY - drag.startY) / previewScale,
+            })
+        },
+        [scale, setPhotoTransform]
+    )
+
+    const handlePhotoPointerUp = useCallback((event: React.PointerEvent<HTMLImageElement>) => {
+        if (dragRef.current?.pointerId !== event.pointerId) return
+        dragRef.current = null
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+            event.currentTarget.releasePointerCapture(event.pointerId)
+        }
+    }, [])
+
     if (!template) return null
 
     const TemplateComponent = template.component
@@ -63,7 +112,13 @@ export default function PreviewPanel({ posterRef }: Props) {
                             height: template.height,
                         }}
                     >
-                        <TemplateComponent data={formData} />
+                        <TemplateComponent
+                            data={formData}
+                            photoTransform={photoTransform}
+                            onPhotoPointerDown={formData.photo ? handlePhotoPointerDown : undefined}
+                            onPhotoPointerMove={formData.photo ? handlePhotoPointerMove : undefined}
+                            onPhotoPointerUp={formData.photo ? handlePhotoPointerUp : undefined}
+                        />
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import type { PosterTemplate, TemplateProps } from './types'
 import type { FieldDefinition } from './types'
 import logoImg from '../assets/logo.jpg'
+import { DEFAULT_PHOTO_TRANSFORM } from './types'
 import { keyItems } from '../utils/listKeys'
 import './template-nanny.css'
 
@@ -62,7 +63,13 @@ const nannyFields: FieldDefinition[] = [
 ]
 
 /** 家政模板渲染组件 */
-const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
+const NannyTemplate: React.FC<TemplateProps> = ({
+    data,
+    photoTransform = DEFAULT_PHOTO_TRANSFORM,
+    onPhotoPointerDown,
+    onPhotoPointerMove,
+    onPhotoPointerUp,
+}) => {
     const city = (data.city as string) || '上海'
     const title = (data.title as string) || '育婴师'
     const name = (data.name as string) || '姓名'
@@ -70,6 +77,10 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
     const tags = (data.tags as string[]) || []
     const highlights = (data.highlights as string[]) || []
     const photo = data.photo as string | null
+    const photoStyle = {
+        transform: `translate(${photoTransform.offsetX}px, ${photoTransform.offsetY}px) scale(${photoTransform.scale})`,
+        transformOrigin: 'center center',
+    }
 
     const mainTitle = `${city}${title}`
     const titleSizeClass =
@@ -130,7 +141,17 @@ const NannyTemplate: React.FC<TemplateProps> = ({ data }) => {
                     {/* 右列：人物照片 */}
                     <div className="nanny-right-col">
                         {photo ? (
-                            <img src={photo} alt="员工照片" className="nanny-photo-cutout" />
+                            <img
+                                src={photo}
+                                alt="员工照片"
+                                className={`nanny-photo-cutout ${onPhotoPointerDown ? 'nanny-photo-cutout--draggable' : ''}`}
+                                style={photoStyle}
+                                draggable={false}
+                                onPointerDown={onPhotoPointerDown}
+                                onPointerMove={onPhotoPointerMove}
+                                onPointerUp={onPhotoPointerUp}
+                                onPointerCancel={onPhotoPointerUp}
+                            />
                         ) : (
                             <div className="nanny-photo-placeholder-cutout">
                                 <span className="ph-icon">📷</span>

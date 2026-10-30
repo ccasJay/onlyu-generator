@@ -1,7 +1,7 @@
 {
     "name": "onlyu-generator",
     "private": true,
-    "version": "0.2.1",
+    "version": "0.3.0",
     "type": "module",
     "scripts": {
         "dev": "vite",
@@ -45,6 +45,7 @@
     },
     "dependencies": {
         "@tauri-apps/plugin-dialog": "^2.8.4",
+        "@tauri-apps/plugin-fs": "^2.7.1",
         "@tauri-apps/plugin-process": "^2.4.0",
         "@tauri-apps/plugin-updater": "^2.14.1",
         "file-saver": "^2.0.5",

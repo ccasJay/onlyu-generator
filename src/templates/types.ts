@@ -26,9 +26,26 @@ export interface FieldDefinition {
 /** 模板的表单数据 */
 export type FormData = Record<string, string | string[] | null>
 
+/** 照片在固定照片框内的缩放与偏移 */
+export interface PhotoTransform {
+    scale: number
+    offsetX: number
+    offsetY: number
+}
+
+export const DEFAULT_PHOTO_TRANSFORM: PhotoTransform = {
+    scale: 1,
+    offsetX: 0,
+    offsetY: 0,
+}
+
 /** 模板渲染组件的 Props */
 export interface TemplateProps {
     data: FormData
+    photoTransform?: PhotoTransform
+    onPhotoPointerDown?: React.PointerEventHandler<HTMLImageElement>
+    onPhotoPointerMove?: React.PointerEventHandler<HTMLImageElement>
+    onPhotoPointerUp?: React.PointerEventHandler<HTMLImageElement>
 }
 
 /** 海报模板定义 */

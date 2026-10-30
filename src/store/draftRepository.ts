@@ -1,4 +1,5 @@
-import type { FormData } from '../templates/types'
+import { DEFAULT_PHOTO_TRANSFORM, type FormData, type PhotoTransform } from '../templates/types'
+import { normalizePhotoTransform } from '../utils/photoTransform'
 
 const DB_NAME = 'onlyu-generator'
 const DB_VERSION = 1
@@ -27,6 +28,7 @@ interface DraftRecord {
     templateId: string
     fields: FormData
     photoId: string | null
+    photoTransform?: PhotoTransform
     updatedAt: number
 }
 
@@ -39,6 +41,7 @@ interface ImageRecord {
 export interface LoadedDraft {
     fields: FormData
     photo: string | null
+    photoTransform: PhotoTransform
     updatedAt: number
     warning: string | null
 }
@@ -150,6 +153,7 @@ function parseDraft(value: unknown, templateId: string): DraftRecord {
         templateId,
         fields,
         photoId: value.photoId,
+        photoTransform: normalizePhotoTransform(value.photoTransform),
         updatedAt: value.updatedAt,
     }
 }
@@ -197,6 +201,7 @@ export async function loadDraft(templateId: string): Promise<LoadedDraft | null>
     return {
         fields: draft.fields,
         photo,
+        photoTransform: draft.photoTransform ?? { ...DEFAULT_PHOTO_TRANSFORM },
         updatedAt: draft.updatedAt,
         warning,
     }
@@ -205,6 +210,8 @@ export async function loadDraft(templateId: string): Promise<LoadedDraft | null>
 export interface SaveDraftOptions {
     /** 照片未变化时跳过图片写入，避免每次输入重写大图 */
     persistImage?: boolean
+    /** 照片缩放与偏移 */
+    photoTransform?: PhotoTransform
 }
 
 /** 保存草稿；照片和文本分仓写入 */
@@ -243,6 +250,7 @@ export async function saveDraft(
         templateId,
         fields,
         photoId,
+        photoTransform: options.photoTransform ?? { ...DEFAULT_PHOTO_TRANSFORM },
         updatedAt: now,
     } satisfies DraftRecord)
 

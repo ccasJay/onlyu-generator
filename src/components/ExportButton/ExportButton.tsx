@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useFormStore } from '../../store/useFormStore'
+import { describeError } from '../../utils/errors'
 import { exportPoster } from '../../utils/export'
 import { focusFirstInvalidField } from '../../utils/validation'
 import './ExportButton.css'
@@ -31,8 +32,8 @@ export default function ExportButton({ posterRef }: Props) {
                 setNotice('海报已保存')
             }
         } catch (error) {
-            const message = error instanceof Error ? error.message : '导出失败，请重试'
-            setNotice(`导出失败：${message}`)
+            console.error('导出失败:', error)
+            setNotice(`导出失败：${describeError(error, '请重试')}`)
         } finally {
             setExporting(false)
         }

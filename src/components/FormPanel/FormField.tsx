@@ -3,6 +3,7 @@ import { useFormStore } from '../../store/useFormStore'
 import type { FieldDefinition } from '../../templates/types'
 import HighlightsInput from './HighlightsInput'
 import ImageUploader from './ImageUploader'
+import PhotoAdjustments from './PhotoAdjustments'
 import TagInput from './TagInput'
 
 interface Props {
@@ -28,12 +29,15 @@ function FormField({ field }: Props) {
     switch (field.type) {
         case 'image':
             return (
-                <ImageUploader
-                    label={field.label}
-                    value={(value as string | null) ?? null}
-                    onChange={handleChange}
-                    onBusyChange={setImageProcessing}
-                />
+                <>
+                    <ImageUploader
+                        label={field.label}
+                        value={(value as string | null) ?? null}
+                        onChange={handleChange}
+                        onBusyChange={setImageProcessing}
+                    />
+                    <PhotoAdjustments />
+                </>
             )
 
         case 'tags':

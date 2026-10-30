@@ -1,7 +1,9 @@
 import { invoke } from '@tauri-apps/api/core'
 import { downloadDir, join } from '@tauri-apps/api/path'
 import { save } from '@tauri-apps/plugin-dialog'
+import { writeFile } from '@tauri-apps/plugin-fs'
 import { saveAs } from 'file-saver'
+import { describeError } from '../utils/errors'
 import { isTauriRuntime } from './runtime'
 
 export type SavePngResult = 'saved' | 'cancelled'
@@ -27,6 +29,15 @@ function dataUrlToBase64(dataUrl: string): string {
         throw new Error('导出图片数据无效')
     }
     return dataUrl.slice(separator + 1)
+}
+
+function dataUrlToBytes(dataUrl: string): Uint8Array {
+    const binary = atob(dataUrlToBase64(dataUrl))
+    const bytes = new Uint8Array(binary.length)
+    for (let index = 0; index < binary.length; index += 1) {
+        bytes[index] = binary.charCodeAt(index)
+    }
+    return bytes
 }
 
 function isAbortError(error: unknown): boolean {
@@ -96,10 +107,22 @@ export async function savePng(dataUrl: string, fileName: string): Promise<SavePn
 
         if (!path) return 'cancelled'
 
-        await invoke('save_png', {
-            path,
-            base64Data: dataUrlToBase64(dataUrl),
-        })
+        try {
+            await invoke('save_png', {
+                path,
+                base64Data: dataUrlToBase64(dataUrl),
+            })
+        } catch (nativeError) {
+            // 自定义命令失败时改用 fs 插件写入；对话框已把所选路径加入 fs scope
+            try {
+                await writeFile(path, dataUrlToBytes(dataUrl))
+            } catch (fsError) {
+                throw new Error(
+                    `保存失败：${describeError(nativeError)}；备用写入失败：${describeError(fsError)}`,
+                    { cause: fsError }
+                )
+            }
+        }
         return 'saved'
     }
 
