@@ -16,6 +16,7 @@ const nannyFields: FieldDefinition[] = [
         label: '城市',
         type: 'text',
         placeholder: '例如：上海',
+        maxLength: 6,
         defaultValue: '上海',
     },
     {
@@ -23,6 +24,7 @@ const nannyFields: FieldDefinition[] = [
         label: '主标题（职位）',
         type: 'text',
         placeholder: '例如：育婴师',
+        maxLength: 8,
         defaultValue: '育婴师',
     },
     {
@@ -31,24 +33,30 @@ const nannyFields: FieldDefinition[] = [
         type: 'text',
         placeholder: '例如：刘阿姨',
         required: true,
+        maxLength: 8,
     },
     {
         key: 'salary',
         label: '薪资说明',
         type: 'text',
         placeholder: '例如：8500元+/26天',
+        maxLength: 16,
     },
     {
         key: 'tags',
         label: '个人标签（逗号分隔）',
         type: 'tags',
         placeholder: '例如：39岁, 上海人, 育婴师',
+        maxItems: 8,
+        maxLength: 6,
     },
     {
         key: 'highlights',
         label: '✨ 亮点文案',
         type: 'highlights',
         placeholder: '例如：310上海本地阿姨，丰富带宝经验',
+        maxItems: 4,
+        maxLength: 24,
     },
 ]
 

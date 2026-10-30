@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { toPng } from 'html-to-image'
 import { saveAs } from 'file-saver'
 import { useFormStore } from '../../store/useFormStore'
+import { focusFirstInvalidField } from '../../utils/validation'
 import './ExportButton.css'
 
 interface Props {
@@ -9,10 +10,15 @@ interface Props {
 }
 
 export default function ExportButton({ posterRef }: Props) {
-    const { isExporting, isImageProcessing, setExporting, formData } = useFormStore()
+    const { isExporting, isImageProcessing, setExporting, validateForm, formData } = useFormStore()
 
     const handleExport = useCallback(async () => {
         if (!posterRef.current || isExporting || isImageProcessing) return
+
+        if (!validateForm()) {
+            focusFirstInvalidField(useFormStore.getState().validationErrors)
+            return
+        }
 
         setExporting(true)
         try {
@@ -31,7 +37,7 @@ export default function ExportButton({ posterRef }: Props) {
         } finally {
             setExporting(false)
         }
-    }, [posterRef, isExporting, isImageProcessing, setExporting, formData.name])
+    }, [posterRef, isExporting, isImageProcessing, setExporting, validateForm, formData.name])
 
     return (
         <button

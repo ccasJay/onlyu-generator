@@ -113,3 +113,7 @@
     font-size: var(--font-size-xs);
     color: var(--color-text-light);
 }
+
+.highlights-hint--error {
+    color: var(--color-primary-dark);
+}

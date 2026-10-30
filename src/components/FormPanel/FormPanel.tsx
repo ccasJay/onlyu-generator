@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { useFormStore } from '../../store/useFormStore'
 import { getTemplateById } from '../../templates'
+import type { FieldDefinition } from '../../templates/types'
 import ImageUploader from './ImageUploader'
 import TagInput from './TagInput'
 import HighlightsInput from './HighlightsInput'
@@ -13,7 +14,14 @@ const saveStatusLabels = {
 } as const
 
 export default function FormPanel() {
-    const { currentTemplateId, formData, setField, saveStatus, setImageProcessing } = useFormStore()
+    const {
+        currentTemplateId,
+        formData,
+        setField,
+        saveStatus,
+        setImageProcessing,
+        validationErrors,
+    } = useFormStore()
     const template = getTemplateById(currentTemplateId)
 
     const handleFieldChange = useCallback(
@@ -22,6 +30,74 @@ export default function FormPanel() {
         },
         [setField]
     )
+
+    const renderControl = (field: FieldDefinition) => {
+        switch (field.type) {
+            case 'image':
+                return (
+                    <ImageUploader
+                        label={field.label}
+                        value={(formData[field.key] as string | null) ?? null}
+                        onChange={(v) => handleFieldChange(field.key, v)}
+                        onBusyChange={setImageProcessing}
+                    />
+                )
+
+            case 'tags':
+                return (
+                    <TagInput
+                        label={field.label}
+                        value={(formData[field.key] as string[]) || []}
+                        onChange={(v) => handleFieldChange(field.key, v)}
+                        placeholder={field.placeholder}
+                        maxItems={field.maxItems}
+                        maxLength={field.maxLength}
+                    />
+                )
+
+            case 'highlights':
+                return (
+                    <HighlightsInput
+                        label={field.label}
+                        value={(formData[field.key] as string[]) || []}
+                        onChange={(v) => handleFieldChange(field.key, v)}
+                        placeholder={field.placeholder}
+                        maxItems={field.maxItems}
+                        maxLength={field.maxLength}
+                    />
+                )
+
+            case 'textarea':
+                return (
+                    <div className="form-field">
+                        <label className="form-field-label">{field.label}</label>
+                        <textarea
+                            className="form-field-textarea"
+                            value={(formData[field.key] as string) || ''}
+                            onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                            placeholder={field.placeholder}
+                            maxLength={field.maxLength}
+                            rows={3}
+                        />
+                    </div>
+                )
+
+            default:
+                return (
+                    <div className="form-field">
+                        <label className="form-field-label">{field.label}</label>
+                        <input
+                            className="form-field-input"
+                            type="text"
+                            value={(formData[field.key] as string) || ''}
+                            onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                            placeholder={field.placeholder}
+                            maxLength={field.maxLength}
+                        />
+                    </div>
+                )
+        }
+    }
 
     if (!template) return null
 
@@ -45,74 +121,16 @@ export default function FormPanel() {
             </div>
 
             <div className="form-panel-fields">
-                {template.fields.map((field) => {
-                    switch (field.type) {
-                        case 'image':
-                            return (
-                                <ImageUploader
-                                    key={field.key}
-                                    label={field.label}
-                                    value={(formData[field.key] as string | null) ?? null}
-                                    onChange={(v) => handleFieldChange(field.key, v)}
-                                    onBusyChange={setImageProcessing}
-                                />
-                            )
-
-                        case 'tags':
-                            return (
-                                <TagInput
-                                    key={field.key}
-                                    label={field.label}
-                                    value={(formData[field.key] as string[]) || []}
-                                    onChange={(v) => handleFieldChange(field.key, v)}
-                                    placeholder={field.placeholder}
-                                />
-                            )
-
-                        case 'highlights':
-                            return (
-                                <HighlightsInput
-                                    key={field.key}
-                                    label={field.label}
-                                    value={(formData[field.key] as string[]) || []}
-                                    onChange={(v) => handleFieldChange(field.key, v)}
-                                    placeholder={field.placeholder}
-                                />
-                            )
-
-                        case 'textarea':
-                            return (
-                                <div key={field.key} className="form-field">
-                                    <label className="form-field-label">{field.label}</label>
-                                    <textarea
-                                        className="form-field-textarea"
-                                        value={(formData[field.key] as string) || ''}
-                                        onChange={(e) =>
-                                            handleFieldChange(field.key, e.target.value)
-                                        }
-                                        placeholder={field.placeholder}
-                                        rows={3}
-                                    />
-                                </div>
-                            )
-
-                        default:
-                            return (
-                                <div key={field.key} className="form-field">
-                                    <label className="form-field-label">{field.label}</label>
-                                    <input
-                                        className="form-field-input"
-                                        type="text"
-                                        value={(formData[field.key] as string) || ''}
-                                        onChange={(e) =>
-                                            handleFieldChange(field.key, e.target.value)
-                                        }
-                                        placeholder={field.placeholder}
-                                    />
-                                </div>
-                            )
-                    }
-                })}
+                {template.fields.map((field) => (
+                    <div key={field.key} className="form-field-slot" data-field-key={field.key}>
+                        {renderControl(field)}
+                        {validationErrors[field.key] && (
+                            <p className="form-field-error" role="alert">
+                                {validationErrors[field.key]}
+                            </p>
+                        )}
+                    </div>
+                ))}
             </div>
         </div>
     )

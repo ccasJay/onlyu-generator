@@ -80,11 +80,11 @@ export default function ImageUploader({ label, value, onChange, onBusyChange }: 
                     >
                         <input
                             id={inputId}
+                            className="image-uploader-input"
                             type="file"
                             accept="image/jpeg,image/png,image/webp"
                             onChange={handleChange}
                             disabled={isProcessing}
-                            hidden
                         />
                         <span className="image-uploader-icon">{isProcessing ? '⏳' : '📷'}</span>
                         <span className="image-uploader-text">

@@ -53,6 +53,18 @@
     gap: var(--space-lg);
 }
 
+.form-field-slot {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-field-error {
+    font-size: var(--font-size-xs);
+    line-height: 1.5;
+    color: var(--color-primary-dark);
+}
+
 /* 通用文字输入字段 */
 .form-field {
     display: flex;

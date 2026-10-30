@@ -15,6 +15,10 @@ export interface FieldDefinition {
     placeholder?: string
     /** 是否必填 */
     required?: boolean
+    /** 单条文本最大长度 */
+    maxLength?: number
+    /** 数组字段最大条目数 */
+    maxItems?: number
     /** 默认值 */
     defaultValue?: string | string[]
 }

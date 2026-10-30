@@ -6,6 +6,7 @@ import {
     mergeFormDataWithDefaults,
     templates,
 } from '../templates'
+import { validateFormData, type ValidationErrors } from '../utils/validation'
 import {
     deleteDraft,
     DraftCorruptionError,
@@ -30,6 +31,8 @@ interface FormStore {
     saveStatus: SaveStatus
     /** 非阻塞提示 */
     notice: string | null
+    /** 字段校验错误 */
+    validationErrors: ValidationErrors
     /** 导出中状态 */
     isExporting: boolean
     /** 图片处理中状态 */
@@ -45,6 +48,8 @@ interface FormStore {
     setField: (key: string, value: string | string[] | null) => void
     /** 批量设置表单数据（切换模板时用） */
     setFormData: (data: FormData) => void
+    /** 校验当前模板，返回是否通过 */
+    validateForm: () => boolean
     /** 设置导出状态 */
     setExporting: (v: boolean) => void
     /** 设置图片处理状态 */
@@ -75,6 +80,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
     hydrationStatus: 'loading',
     saveStatus: 'idle',
     notice: null,
+    validationErrors: {},
     isExporting: false,
     isImageProcessing: false,
 
@@ -120,6 +126,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
             formData,
             hydrationStatus: degraded ? 'degraded' : 'ready',
             saveStatus: restored ? 'saved' : 'idle',
+            validationErrors: {},
             isImageProcessing: false,
             notice,
         })
@@ -171,6 +178,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
             formData,
             hydrationStatus: 'ready',
             saveStatus: restored ? 'saved' : 'idle',
+            validationErrors: {},
             isImageProcessing: false,
             notice,
         })
@@ -178,11 +186,26 @@ export const useFormStore = create<FormStore>((set, get) => ({
     },
 
     setField: (key, value) =>
-        set((state) => ({
-            formData: { ...state.formData, [key]: value },
-        })),
+        set((state) => {
+            const validationErrors = { ...state.validationErrors }
+            delete validationErrors[key]
+            return {
+                formData: { ...state.formData, [key]: value },
+                validationErrors,
+            }
+        }),
 
-    setFormData: (data) => set({ formData: data }),
+    setFormData: (data) => set({ formData: data, validationErrors: {} }),
+
+    validateForm: () => {
+        const { currentTemplateId, formData } = get()
+        const template = getTemplateById(currentTemplateId)
+        if (!template) return false
+
+        const validationErrors = validateFormData(template, formData)
+        set({ validationErrors })
+        return Object.keys(validationErrors).length === 0
+    },
 
     setExporting: (v) => set({ isExporting: v }),
 
@@ -208,6 +231,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
         set({
             formData: getDefaultFormData(template),
             saveStatus: 'idle',
+            validationErrors: {},
             isImageProcessing: false,
             notice: null,
         })

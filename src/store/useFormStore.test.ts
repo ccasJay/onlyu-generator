@@ -103,4 +103,17 @@ describe('useFormStore hydration', () => {
         expect(state.currentTemplateId).toBe('nanny')
         expect(state.notice).toContain('模板不存在')
     })
+
+    it('blocks export validation and clears a field error after correction', async () => {
+        await useFormStore.getState().hydrate()
+
+        expect(useFormStore.getState().validateForm()).toBe(false)
+        expect(useFormStore.getState().validationErrors.photo).toBe('请上传照片')
+        expect(useFormStore.getState().validationErrors.name).toBe('请输入姓名')
+
+        useFormStore.getState().setField('name', '王阿姨')
+
+        expect(useFormStore.getState().validationErrors.name).toBeUndefined()
+        expect(useFormStore.getState().validationErrors.photo).toBe('请上传照片')
+    })
 })
