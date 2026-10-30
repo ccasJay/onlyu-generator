@@ -99,8 +99,8 @@
 ### Latest Result
 
 - 状态：blocked
-- 验证时间：2026-10-30 13:31（UTC+8）
-- 验证对象：代码提交 `9c742c4`；架构改为当前仓库公开直发后，代码与验证证据需要刷新。
+- 验证时间：2026-10-30 13:41（UTC+8）
+- 验证对象：代码提交 `d59a860`；验证后工作区仅保留本文件的验证记录变更。
 - 验证摘要：
   - 通过：`npm run lint`、`npm run format:check`、`npm run typecheck`、`npm run test`（15 个测试文件，39 个测试）、`npm run test:e2e`（6 个浏览器测试）、`npm run build`、`npm run version:check`。
   - 通过：`cargo test --manifest-path src-tauri/Cargo.toml`（1 个原子写入测试）；`cargo check` 与 `npm run tauri build -- --no-bundle` 成功；两个 workflow YAML 可解析。
@@ -109,4 +109,4 @@
   - 阻塞：当前仓库尚未改为 public，`TAURI_SIGNING_PRIVATE_KEY`、`TAURI_SIGNING_PRIVATE_KEY_PASSWORD` 尚未配置到 CI，因此未执行 Windows NSIS 发布、公开 `latest.json` 上传与真实 `0.2.0 → 0.2.1` 更新演练。
   - 待人工：Windows 上的原生保存对话框、取消保存、只读目录失败恢复，以及真实更新下载/签名校验/重启/草稿保留，需按 README 手工清单验证。
   - 风险提示：开发用签名私钥与密码保存在本机临时目录，需由维护者转入 CI secrets；未完成前不得对外发布自动更新。
-- 新鲜度：stale（架构改为公开仓库直发后需重新执行验证）。
+- 新鲜度：current（代码 `d59a860`；公开仓库直发架构的本地自动化验证已重新执行）。
