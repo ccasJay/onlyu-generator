@@ -62,7 +62,7 @@
   - 实施目标与场景：README 记录安装、开发、构建、测试、Lint、版本发布、公开 releases 仓库、updater 签名密钥与 CI secrets 配置，以及原生保存/更新检查/安装的手工验证清单；明确 `0.1.0` 用户需手动安装一次 `0.2.0`。场景：新维护者按文档可完成本地构建和测试；手工清单覆盖保存、取消、写入失败、启动检查、手动检查、下载失败、重启确认。
   - 验证手段：逐段执行 README 中的安装、构建、测试命令；检查清单覆盖 Spec 8.5/8.6 要求；用链接检查或人工审阅确认引用有效。
 
-- [ ] //TODO 13. 完成版本统一与 Windows 发布流水线
+- [x] //TODO 13. 完成版本统一与 Windows 发布流水线
   - 落实标准：[9.1](./spec.md#spec-req-9-1), [9.2](./spec.md#spec-req-9-2), [9.3](./spec.md#spec-req-9-3), [9.4](./spec.md#spec-req-9-4), [9.5](./spec.md#spec-req-9-5), [9.6](./spec.md#spec-req-9-6), [10.9](./spec.md#spec-req-10-9)
   - 实施目标与场景：将版本统一为 `0.2.0` 并增加版本一致性脚本；发布 workflow 由 `v*` 标签触发，只构建 Windows NSIS，启用 updater 产物、`npm ci`、缓存与并发控制；将安装包、签名文件和改写为公开仓库 URL 的 `latest.json` 上传到公开 releases 仓库；缺少密钥或凭据时构建前失败，发布说明包含旧版本手动升级提示。场景：标签与版本不一致时 workflow 在构建前失败；删除测试环境 secret 时不产生未签名 Release；公开仓库 Release 只含安装包、签名和清单，不含源码。
   - 验证手段：运行 `npm run version:check`；在测试标签上执行一次发布并检查 `gh release view`、资产列表与 `latest.json` URL；在临时分支移除 secret 验证失败路径。公开仓库和 secrets 未就绪时，该项标记为 blocked/pending-human，不宣称通过。
