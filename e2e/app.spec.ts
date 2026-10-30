@@ -106,6 +106,28 @@ test('compresses a large transparent PNG and exports a 2x PNG', async ({ page })
     }, source)
     expect(Math.max(dimensions.width, dimensions.height)).toBeLessThanOrEqual(2000)
 
+    const zoom = page.getByLabel('照片缩放比例')
+    await zoom.evaluate((element) => {
+        const input = element as HTMLInputElement
+        const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
+        setter?.call(input, '150')
+        input.dispatchEvent(new Event('input', { bubbles: true }))
+        input.dispatchEvent(new Event('change', { bubbles: true }))
+    })
+    await expect(page.locator('.nanny-photo-cutout')).toHaveAttribute('style', /scale\(1\.5\)/)
+
+    const photo = page.locator('.nanny-photo-cutout')
+    const photoBox = await photo.boundingBox()
+    expect(photoBox).not.toBeNull()
+    await page.mouse.move(photoBox!.x + photoBox!.width / 2, photoBox!.y + photoBox!.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(
+        photoBox!.x + photoBox!.width / 2 + 30,
+        photoBox!.y + photoBox!.height / 2 + 20
+    )
+    await page.mouse.up()
+    await expect(photo).not.toHaveAttribute('style', /translate\(0px, 0px\)/)
+
     const downloadPromise = page.waitForEvent('download')
     await page.getByRole('button', { name: /导出海报/ }).click()
     const download = await downloadPromise

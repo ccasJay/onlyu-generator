@@ -252,8 +252,20 @@
     height: 100%;
     object-fit: contain;
     object-position: bottom right;
+    will-change: transform;
     /* 光晕投影，让人物更融合 */
     filter: drop-shadow(-12px 0 28px rgba(0, 0, 0, 0.35));
+}
+
+.nanny-photo-cutout--draggable {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    transition: none;
+}
+
+.nanny-photo-cutout--draggable:active {
+    cursor: grabbing;
 }
 
 .nanny-photo-placeholder-cutout {

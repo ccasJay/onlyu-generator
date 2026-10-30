@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import type { FormData } from '../templates/types'
+import { DEFAULT_PHOTO_TRANSFORM, type FormData, type PhotoTransform } from '../templates/types'
+import { normalizePhotoTransform } from '../utils/photoTransform'
 import {
     getDefaultFormData,
     getTemplateById,
@@ -25,6 +26,8 @@ interface FormStore {
     currentTemplateId: string
     /** 表单数据 */
     formData: FormData
+    /** 照片缩放与偏移 */
+    photoTransform: PhotoTransform
     /** 草稿恢复状态 */
     hydrationStatus: HydrationStatus
     /** 自动保存状态 */
@@ -50,6 +53,10 @@ interface FormStore {
     setField: (key: string, value: string | string[] | null) => void
     /** 批量设置表单数据（切换模板时用） */
     setFormData: (data: FormData) => void
+    /** 更新照片缩放或偏移 */
+    setPhotoTransform: (patch: Partial<PhotoTransform>) => void
+    /** 重置照片缩放与偏移 */
+    resetPhotoTransform: () => void
     /** 校验当前模板，返回是否通过 */
     validateForm: () => boolean
     /** 设置导出状态 */
@@ -79,6 +86,7 @@ function describeLoadError(error: unknown): string {
 export const useFormStore = create<FormStore>((set, get) => ({
     currentTemplateId: defaultTemplateId,
     formData: {},
+    photoTransform: { ...DEFAULT_PHOTO_TRANSFORM },
     hydrationStatus: 'loading',
     saveStatus: 'idle',
     notice: null,
@@ -102,6 +110,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
         }
 
         let formData = getDefaultFormData(template)
+        let photoTransform = { ...DEFAULT_PHOTO_TRANSFORM }
         let notice: string | null =
             storedTemplateId && !storedTemplate ? '上次使用的模板不存在，已切换到默认模板' : null
         let degraded = false
@@ -113,6 +122,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
                 restored = true
                 formData = mergeFormDataWithDefaults(template, draft.fields)
                 formData.photo = draft.photo
+                photoTransform = draft.photoTransform
                 if (draft.warning) {
                     notice = appendNotice(notice, draft.warning)
                 }
@@ -126,6 +136,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
         set({
             currentTemplateId: template.id,
             formData,
+            photoTransform,
             hydrationStatus: degraded ? 'degraded' : 'ready',
             saveStatus: restored ? 'saved' : 'idle',
             validationErrors: {},
@@ -158,6 +169,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
         }
 
         let formData = getDefaultFormData(target)
+        let photoTransform = { ...DEFAULT_PHOTO_TRANSFORM }
         let notice: string | null = null
         let restored = false
 
@@ -167,6 +179,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
                 restored = true
                 formData = mergeFormDataWithDefaults(target, draft.fields)
                 formData.photo = draft.photo
+                photoTransform = draft.photoTransform
                 if (draft.warning) {
                     notice = draft.warning
                 }
@@ -180,6 +193,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
         set({
             currentTemplateId: target.id,
             formData,
+            photoTransform,
             hydrationStatus: 'ready',
             saveStatus: restored ? 'saved' : 'idle',
             validationErrors: {},
@@ -193,13 +207,24 @@ export const useFormStore = create<FormStore>((set, get) => ({
         set((state) => {
             const validationErrors = { ...state.validationErrors }
             delete validationErrors[key]
+            const photoChanged = key === 'photo' && state.formData.photo !== value
             return {
                 formData: { ...state.formData, [key]: value },
+                photoTransform: photoChanged
+                    ? { ...DEFAULT_PHOTO_TRANSFORM }
+                    : state.photoTransform,
                 validationErrors,
             }
         }),
 
     setFormData: (data) => set({ formData: data, validationErrors: {} }),
+
+    setPhotoTransform: (patch) =>
+        set((state) => ({
+            photoTransform: normalizePhotoTransform({ ...state.photoTransform, ...patch }),
+        })),
+
+    resetPhotoTransform: () => set({ photoTransform: { ...DEFAULT_PHOTO_TRANSFORM } }),
 
     validateForm: () => {
         const { currentTemplateId, formData } = get()
@@ -234,6 +259,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
         suppressNextSave = true
         set({
             formData: getDefaultFormData(template),
+            photoTransform: { ...DEFAULT_PHOTO_TRANSFORM },
             saveStatus: 'idle',
             validationErrors: {},
             isImageProcessing: false,
@@ -246,6 +272,7 @@ export const useFormStore = create<FormStore>((set, get) => ({
 interface PendingSave {
     templateId: string
     formData: FormData
+    photoTransform: PhotoTransform
     persistImage: boolean
     token: number
 }
@@ -259,6 +286,7 @@ async function performSave(pending: PendingSave): Promise<boolean> {
     try {
         await saveDraft(pending.templateId, pending.formData, {
             persistImage: pending.persistImage,
+            photoTransform: pending.photoTransform,
         })
         if (pending.token === saveToken) {
             useFormStore.setState({ saveStatus: 'saved' })
@@ -275,11 +303,16 @@ async function performSave(pending: PendingSave): Promise<boolean> {
     }
 }
 
-function scheduleSave(templateId: string, formData: FormData, persistImage: boolean): void {
+function scheduleSave(
+    templateId: string,
+    formData: FormData,
+    photoTransform: PhotoTransform,
+    persistImage: boolean
+): void {
     if (saveTimer) clearTimeout(saveTimer)
 
     const token = ++saveToken
-    pendingSave = { templateId, formData, persistImage, token }
+    pendingSave = { templateId, formData, photoTransform, persistImage, token }
     useFormStore.setState({ saveStatus: 'saving' })
     saveTimer = setTimeout(() => {
         saveTimer = null
@@ -314,6 +347,7 @@ useFormStore.subscribe((state, previous) => {
     if (state.hydrationStatus === 'loading') return
     if (
         state.formData === previous.formData &&
+        state.photoTransform === previous.photoTransform &&
         state.currentTemplateId === previous.currentTemplateId
     ) {
         return
@@ -326,6 +360,7 @@ useFormStore.subscribe((state, previous) => {
     scheduleSave(
         state.currentTemplateId,
         state.formData,
+        state.photoTransform,
         state.formData.photo !== previous.formData.photo
     )
 })

@@ -54,13 +54,17 @@ describe('useFormStore hydration', () => {
 
     it('restores the draft and fills fields missing from older drafts', async () => {
         writeCurrentTemplateId('nanny')
-        await saveDraft('nanny', {
-            city: '北京',
-            name: '王阿姨',
-            photo: 'data:image/png;base64,BBBB',
-            tags: [],
-            highlights: [],
-        })
+        await saveDraft(
+            'nanny',
+            {
+                city: '北京',
+                name: '王阿姨',
+                photo: 'data:image/png;base64,BBBB',
+                tags: [],
+                highlights: [],
+            },
+            { photoTransform: { scale: 1.4, offsetX: 12, offsetY: -20 } }
+        )
 
         await useFormStore.getState().hydrate()
 
@@ -71,6 +75,7 @@ describe('useFormStore hydration', () => {
         expect(state.formData.name).toBe('王阿姨')
         expect(state.formData.title).toBe('育婴师')
         expect(state.formData.photo).toBe('data:image/png;base64,BBBB')
+        expect(state.photoTransform).toEqual({ scale: 1.4, offsetX: 12, offsetY: -20 })
     })
 
     it('falls back to defaults and degrades when the draft is incompatible', async () => {
@@ -102,6 +107,22 @@ describe('useFormStore hydration', () => {
 
         expect(state.currentTemplateId).toBe('nanny')
         expect(state.notice).toContain('模板不存在')
+    })
+
+    it('resets photo transform when a different photo is selected', () => {
+        useFormStore.setState({
+            hydrationStatus: 'ready',
+            formData: { photo: 'data:image/png;base64,OLD' },
+            photoTransform: { scale: 1.4, offsetX: 20, offsetY: -10 },
+        })
+
+        useFormStore.getState().setField('photo', 'data:image/png;base64,NEW')
+
+        expect(useFormStore.getState().photoTransform).toEqual({
+            scale: 1,
+            offsetX: 0,
+            offsetY: 0,
+        })
     })
 
     it('blocks export validation and clears a field error after correction', async () => {
