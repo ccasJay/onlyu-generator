@@ -22,7 +22,16 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+      "devCsp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src ipc: http://ipc.localhost ws://localhost:5173 http://localhost:5173; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEFCNTBCQjg2REM4RTM1NEIKUldSTE5ZN2NocnRRcTlkTkJjQm9iTGE3S3lGSlNtWlRUT2UyOUdBc2JjVWtmN05kME5IU2Zid2wK",
+      "endpoints": [
+        "https://github.com/ccasJay/onlyu-generator-releases/releases/latest/download/latest.json"
+      ]
     }
   },
   "bundle": {

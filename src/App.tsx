@@ -2,6 +2,7 @@ import { useRef, useEffect, useCallback } from 'react'
 import FormPanel from './components/FormPanel/FormPanel'
 import PreviewPanel from './components/PreviewPanel/PreviewPanel'
 import ExportButton from './components/ExportButton/ExportButton'
+import UpdateButton from './components/UpdateButton/UpdateButton'
 import { useFormStore } from './store/useFormStore'
 import { confirmAction } from './platform/confirm'
 import logoImg from './assets/logo.jpg'
@@ -46,6 +47,7 @@ function App() {
                     </div>
                 </div>
                 <div className="app-header-actions">
+                    <UpdateButton />
                     <button className="app-reset-btn" onClick={() => void handleReset()}>
                         🔄 重置
                     </button>

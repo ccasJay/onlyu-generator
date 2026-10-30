@@ -99,19 +99,32 @@ test('keeps the poster layout within bounds at the minimum window size and max l
     await page.getByLabel('薪资说明').fill('一二三四五六七八九十一二三四五六')
 
     const tagInput = page.getByLabel('个人标签（逗号分隔）')
-    for (const tag of ['标签一', '标签二', '标签三', '标签四', '标签五', '标签六']) {
+    for (const tag of [
+        '标签一',
+        '标签二',
+        '标签三',
+        '标签四',
+        '标签五',
+        '标签六',
+        '标签七',
+        '标签八',
+    ]) {
         await tagInput.fill(tag)
         await tagInput.press('Enter')
     }
 
     const highlightInput = page.getByLabel('✨ 亮点文案')
-    for (const highlight of ['亮点一二三四五六七八九十一二三四', '亮点二', '亮点三']) {
+    for (const highlight of ['亮点一二三四五六七八九十一二三四', '亮点二', '亮点三', '亮点四']) {
         await highlightInput.fill(highlight)
         await highlightInput.press('Enter')
     }
 
     await expect(page.locator('.nanny-main-title')).toHaveText('一二三四五六一二三四五六七八')
     await expect(page.locator('.nanny-name')).toHaveText('一二三四五六七八')
+
+    await page.addStyleTag({
+        content: '.nanny-poster, .nanny-poster * { font-family: sans-serif !important; }',
+    })
 
     const sizes = await page.evaluate(() => ({
         pageWidth: document.documentElement.scrollWidth,
@@ -122,12 +135,27 @@ test('keeps the poster layout within bounds at the minimum window size and max l
     const posterBox = await page.locator('.nanny-poster').boundingBox()
     const titleBox = await page.locator('.nanny-main-title').boundingBox()
     const nameBox = await page.locator('.nanny-name').boundingBox()
+    const tagsBox = await page.locator('.nanny-tags-list').boundingBox()
+    const photoBox = await page.locator('.nanny-photo-placeholder-cutout').boundingBox()
+    const cardBox = await page.locator('.nanny-info-card').boundingBox()
+    const footerBox = await page.locator('.nanny-brand-footer').boundingBox()
+    const salaryBox = await page.locator('.nanny-salary-ribbon').boundingBox()
 
     expect(posterBox).not.toBeNull()
     expect(titleBox).not.toBeNull()
     expect(nameBox).not.toBeNull()
+    expect(tagsBox).not.toBeNull()
+    expect(photoBox).not.toBeNull()
+    expect(cardBox).not.toBeNull()
+    expect(footerBox).not.toBeNull()
+    expect(salaryBox).not.toBeNull()
 
     expect(titleBox!.x).toBeGreaterThanOrEqual(posterBox!.x)
     expect(titleBox!.x + titleBox!.width).toBeLessThanOrEqual(posterBox!.x + posterBox!.width + 1)
     expect(nameBox!.x + nameBox!.width).toBeLessThanOrEqual(posterBox!.x + posterBox!.width + 1)
+    expect(tagsBox!.x + tagsBox!.width).toBeLessThanOrEqual(photoBox!.x + 1)
+    expect(cardBox!.x + cardBox!.width).toBeLessThanOrEqual(posterBox!.x + posterBox!.width + 1)
+    expect(footerBox!.x + footerBox!.width).toBeLessThanOrEqual(cardBox!.x + cardBox!.width + 1)
+    expect(salaryBox!.x).toBeGreaterThanOrEqual(posterBox!.x)
+    expect(salaryBox!.x + salaryBox!.width).toBeLessThanOrEqual(posterBox!.x + posterBox!.width + 1)
 })

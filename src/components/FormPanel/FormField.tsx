@@ -72,7 +72,7 @@ function FormField({ field }: Props) {
                         value={(value as string) || ''}
                         onChange={(event) => handleChange(event.target.value)}
                         placeholder={field.placeholder}
-                        maxLength={field.maxLength}
+                        maxLength={field.maxLength ?? 200}
                         rows={3}
                         aria-invalid={Boolean(error)}
                         aria-describedby={error ? errorId : undefined}

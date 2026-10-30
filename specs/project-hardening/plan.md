@@ -67,7 +67,7 @@
   - 实施目标与场景：将版本统一为 `0.2.0` 并增加版本一致性脚本；发布 workflow 由 `v*` 标签触发，只构建 Windows NSIS，启用 updater 产物、`npm ci`、缓存与并发控制；将安装包、签名文件和改写为公开仓库 URL 的 `latest.json` 上传到公开 releases 仓库；缺少密钥或凭据时构建前失败，发布说明包含旧版本手动升级提示。场景：标签与版本不一致时 workflow 在构建前失败；删除测试环境 secret 时不产生未签名 Release；公开仓库 Release 只含安装包、签名和清单，不含源码。
   - 验证手段：运行 `npm run version:check`；在测试标签上执行一次发布并检查 `gh release view`、资产列表与 `latest.json` URL；在临时分支移除 secret 验证失败路径。公开仓库和 secrets 未就绪时，该项标记为 blocked/pending-human，不宣称通过。
 
-- [ ] //TODO 14. 完成签名自动更新客户端与交互
+- [x] //TODO 14. 完成签名自动更新客户端与交互
   - 落实标准：[10.1](./spec.md#spec-req-10-1), [10.2](./spec.md#spec-req-10-2), [10.3](./spec.md#spec-req-10-3), [10.4](./spec.md#spec-req-10-4), [10.5](./spec.md#spec-req-10-5), [10.6](./spec.md#spec-req-10-6), [10.7](./spec.md#spec-req-10-7), [10.8](./spec.md#spec-req-10-8), [10.10](./spec.md#spec-req-10-10), [10.11](./spec.md#spec-req-10-11)
   - 实施目标与场景：接入 updater、process 与 dialog 插件及最小 capability，封装 `idle/checking/available/downloading/ready/error` 服务；应用就绪后静默检查一次，顶栏提供手动入口，发现更新时展示版本、纯文本说明和“下载并安装/稍后”，下载显示进度，完成后提示重启；非 Tauri 环境隐藏入口且不请求；只接受 HTTPS 与有效签名，拒绝降级；identifier 保持不变，更新后草稿仍可恢复。场景：浏览器中无检查入口且无网络请求；模拟无更新、可更新、下载失败、15 秒超时；拒绝重启后应用继续运行；篡改签名或降低版本时拒绝安装。
   - 验证手段：用 mock updater 编写状态机与超时测试；在 Windows 上使用测试 `latest.json` 验证手动检查、下载进度、重启和草稿保留；用 `git grep` 与产物解包确认无私钥；运行 `cargo check` 与构建检查 capability。真实 `0.2.0 → 0.2.1` 更新演练放入 Feature Verification，公共仓库与 secrets 未就绪时标记 blocked/pending-human。

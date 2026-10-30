@@ -47,8 +47,9 @@ export function validateFormData(template: PosterTemplate, data: FormData): Vali
         }
 
         if (field.type !== 'image' && typeof value === 'string') {
-            if (field.maxLength && value.length > field.maxLength) {
-                errors[field.key] = `${field.label}最多 ${field.maxLength} 个字符`
+            const maxLength = field.maxLength ?? (field.type === 'textarea' ? 200 : undefined)
+            if (maxLength && value.length > maxLength) {
+                errors[field.key] = `${field.label}最多 ${maxLength} 个字符`
             }
         }
     }
